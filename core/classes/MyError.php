@@ -11,6 +11,7 @@ class MyError {
             $e = new Unknown_Exception($e);
         }
         
+        error_log("[TS_START: " . TS_START . "]\n"
         $trace_arr = (cfg('is_var_dump_trace') ? varDump($e->getTrace()) : print_r($e->getTrace(), true));
         $trace_str = base64_encode(gzencode($trace_arr));
         
