@@ -1,0 +1,60 @@
+использовать xampp 5.6, php7 вылетал апач на старых версиях софта
+
+
+tampermonkey: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=ru
+main: https://kolotibablo.com/workers/start
+
+
+проблемы:
+истекает разрешение на несуществующий сертификат где-то за 3 дня (с 58 версии, вроде, самоподписанный сертифика по этому гайду не работает)
+
+
+для создания юзера:
+добавить в бд данные
+создать пользователя в хроме
+установить главную страницу и tampermonkey
+в скрипте для tampermonkey указать домен софта и номер окна
+добавить закладки: домен софта и главная страница
+активировать сертификат
+
+
+C:\Windows\System32\drivers\etc\hosts
+127.0.0.1 scpt.ru
+
+
+создать сертификат на домен и на локалхост (хз, что из них сыграло роль, скорее домен)
+импортировать, на всякий случай
+
+
+создание сертификата: https://www.youtube.com/watch?v=PQZ8wzV9VU8
+cd xampp apache
+makecert
+нужен пароль скрытый
+локация (IN)
+organization name
+common name: домен/localhost
+enter pass phrase первый скрытый пароль
+
+certmgr.msc
+ssl crt импортировать
+
+
+https://wiki.apache.org/httpd/ExampleVhosts
+C:\xampp\apache\conf\extra\httpd-vhosts.conf
+<VirtualHost *:80>
+    DocumentRoot C:/xampp/htdocs/scpt
+    ServerName scpt.ru
+</VirtualHost>
+
+<VirtualHost *:443>
+    DocumentRoot C:/xampp/htdocs/scpt
+    ServerName scpt.ru
+	SSLEngine on
+	SSLProtocol all -SSLv2
+	SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
+	SSLCertificateFile "C:/xampp/apache/conf/ssl.crt/server.crt"
+	SSLCertificateKeyFile "C:/xampp/apache/conf/ssl.key/server.key"
+</VirtualHost>
+
+
+restart apache
