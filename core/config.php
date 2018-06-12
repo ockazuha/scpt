@@ -10,6 +10,7 @@ $cfg = [
     'error_log' => FILES_DIR . '/logs/main.log',
     'date.timezone' => 'Etc/GMT-4', // - это +
     'is_call_500error' => true, // попробовать не менять на сокет-сервере
+    'is_var_dump_trace' => false,
     
     'db' => [
         'is_create_tables' => true,

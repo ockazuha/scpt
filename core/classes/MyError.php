@@ -12,11 +12,17 @@ class MyError {
         }
         
         error_log("[TS_START: " . TS_START . "]\n"
+        $trace_arr = (cfg('is_var_dump_trace') ? varDump($e->getTrace()) : print_r($e->getTrace(), true));
+        $trace_str = base64_encode(gzencode($trace_arr));
+        
+        $log_str = "[TS_START: " . TS_START . "]\n"
                 . ">>> Class: " . $e->getClass() . "\n"
                 . ">>> Message: " . $e->getMessage() . "\n"
                 //. "File: " . $e->getFile() . " (" . $e->getCode() . ")\n"
-                . ">>> Trace: " . base64_encode(gzencode(print_r($e->getTrace(), true))) . "\n"
-                . "_____________________________________________________________________________");
+                . ">>> Trace: $trace_str\n"
+                . "_____________________________________________________________________________";
+        
+        error_log($log_str);
         
         if ($is_exit) {
             if (cfg('is_call_500error')) {

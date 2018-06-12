@@ -14,3 +14,23 @@ function varToFunc($name, $init_data) {
             . '}');
     return $name(null, null, $init_data);
 }
+
+function jsonEncode($str) {
+    return json_encode($str, JSON_UNESCAPED_UNICODE);
+}
+
+function obEndContents() {
+    $result = ob_get_contents();
+    ob_end_clean();
+    return $result;
+}
+
+function varDump($var) {
+    ob_start();
+    var_dump($var);
+    return obEndContents();
+}
+
+function clearNullByte($str) {
+    return preg_replace('/\0/s', '', $str);
+}
