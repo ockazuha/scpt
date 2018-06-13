@@ -1,5 +1,5 @@
 <?php
-define('OFF_ERROR_HANDLING', true);
+//define('OFF_ERROR_HANDLING', true);
 require_once __DIR__ . '/core/static_boot.php';
 
 $text = file_get_contents(cfg('error_log'));

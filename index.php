@@ -10,6 +10,6 @@ require_once __DIR__ . '/core/static_boot.php';
 </head>
 
 <body>
-
+    
 </body>
 </html>

@@ -11,6 +11,7 @@ $cfg = [
     'date.timezone' => 'Etc/GMT-4', // - это +
     'is_call_500error' => true, // попробовать не менять на сокет-сервере
     'is_var_dump_trace' => false,
+    'time_limit' => 30,
     
     'db' => [
         'is_create_tables' => true,
@@ -21,7 +22,8 @@ $cfg = [
     ],
     
     'socket' => [
-        'server_addr' => '',
-        'client_addr' => ''
+        'server_addr' => 'tcp://0.0.0.0:8000',
+        'client_addr' => '',
+        'is_log' => true
     ]
 ];
