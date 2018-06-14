@@ -91,7 +91,7 @@ class MySocket extends Socket {
         }
         
         if (isset($this->requests[(int)$con][$num_request])) {
-            $this->log('Buffer', SOCKET_WARNING);
+            $this->log('Buffer', self::MYSOCKET_WARNING);
             return;
         } else {
             $this->log($str, self::MYSOCKET_MSG);
@@ -106,7 +106,7 @@ class MySocket extends Socket {
         $con_data = $this->issetCon($con);
         
         if ($con_data !== false) {
-            $con_data->obj->messageHandler($con, $cmd, $data, $num_request);
+            $con_data->obj->messageHandler($cmd, $data);
         } else {
             switch ($cmd) {
                 case 'hello':
@@ -124,12 +124,14 @@ class MySocket extends Socket {
                     
                     $link_con_data = &$this->cons[$group][$username];
                     
+                    $this->cons[$group][$username]->obj->data = $link_con_data;
+                    
                     $this->search_cons[] = [
                         'con' => $con,
                         'data' => $link_con_data
                     ];
                     
-                    $this->send($con, 'init', '', false, $num_request);
+                    $this->send($con, 'init');
                     
                     break;
             }
@@ -149,6 +151,18 @@ class MySocket extends Socket {
         
         $this->log($str, self::MYSOCKET_SEND);
         return parent::send($con, $str);
+    }
+    
+    function sendUser($num_user, $cmd, $data, $json_encode = false) {
+        if (isset($this->cons['users'][$num_user])) {
+            $this->send($this->cons['users'][$num_user]->con, $cmd, $data, $json_encode);
+        }
+    }
+    
+    function sendUsers($cmd, $data, $json_encode = false) {
+        foreach ($this->cons['users'] as $user) {
+            $this->send($user->con, $cmd, $data, $json_encode);
+        }
     }
     
     function issetCon($con) {

@@ -40,15 +40,21 @@ sock = {
         
         if (cmd.indexOf('{') === 0) {
             pos = cmd.indexOf('}');
-            sock.requests[parseInt(cmd.substring(1, pos))] = true;
+            var num_request = cmd.substring(1, pos);
+            sock.requests[parseInt(num_request)] = true;
+            cmd.replace('{' + num_request + '}', '');
         }
         
         sock.messageHandler(cmd, data);
     },
     
-    send: function(cmd, data = '') {
+    send: function(cmd, data = '', is_json_encode = false) {
         var buffer = [];
         var buffer_num = null;
+        
+        if (is_json_encode) {
+            data = json.encode(data);
+        }
         
         if (data.length > SOCK_BUFFER_SIZE) {
             for (var i = 0; i < data.length; i+=SOCK_BUFFER_SIZE) {
