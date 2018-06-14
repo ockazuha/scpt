@@ -2,11 +2,13 @@ const SOCK_WARNING = 3;
 const SOCK_SEND = 2;
 const SOCK_MSG = 1;
 const SOCK_SEND_AGAIN = 4;
+const SOCK_BUFFER_SIZE = <?=cfg('socket')['buffer_size']?>;
 
 sock = {
     //h, group, username, messageHandler
     requests: [],
     num_requests: 0,
+    timeout_check: <?=cfg('socket')['timeout_check']?>,
     
     init: function(addr, group, username, messageHandler) {
         this.group = group;
@@ -48,9 +50,9 @@ sock = {
         var buffer = [];
         var buffer_num = null;
         
-        if (data.length > 20) {
-            for (var i = 0; i < data.length; i+=20) {
-                buffer.push(data.substr(i, 20));
+        if (data.length > SOCK_BUFFER_SIZE) {
+            for (var i = 0; i < data.length; i+=SOCK_BUFFER_SIZE) {
+                buffer.push(data.substr(i, SOCK_BUFFER_SIZE));
             }
         }
         
@@ -70,9 +72,9 @@ sock = {
                 if (!sock.requests[num_requests]) {
                     sock.log(str, SOCK_SEND_AGAIN);
                     sock.h.send(str);
-                    setTimeout(checkRequest, 1000);
+                    setTimeout(checkRequest, sock.timeout_check);
                 }
-            }, 1000);
+            }, sock.timeout_check);
 
             sock.h.send(str);
         };

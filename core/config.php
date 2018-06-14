@@ -26,6 +26,8 @@ $cfg = [
         'server_addr' => 'tcp://0.0.0.0:8000',
         'client_addr' => 'ws://127.0.0.1:8000',
         'is_log_server' => true,
-        'is_log_client' => true
+        'is_log_client' => true,
+        'buffer_size' => 8000,
+        'timeout_check' => 1000
     ]
 ];

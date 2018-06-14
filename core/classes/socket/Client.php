@@ -7,17 +7,6 @@ class Client extends Group {
             case 'exit':
                 exit();
                 break;
-            case 'test':
-                $str = '';
-                for ($i = 0; $i < 499999; $i++) {
-                    $str .= '1';
-                }
-                $str .= '2';
-                $sock->send($con, 'kek', $str);
-                break;
-            case 'test2':
-                print_r($sock->requests);
-                break;
         }
     }
 }
