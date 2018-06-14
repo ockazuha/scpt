@@ -1,6 +1,6 @@
 <?php
 class Socket {
-    private $connects = [];
+    public $connects = [];
     
     function __construct($addr) {
         $socket = stream_socket_server($addr, $errno, $errstr);
@@ -43,7 +43,7 @@ class Socket {
         fclose($socket);
     }
     
-    protected function handshake($connect) {
+    function handshake($connect) {
         $info = array();
 
         $line = fgets($connect);
@@ -79,7 +79,7 @@ class Socket {
         return $info;
     }
     
-    protected function encode($payload, $type = 'text', $masked = false) {
+    function encode($payload, $type = 'text', $masked = false) {
         $frameHead = array();
         $payloadLength = strlen($payload);
 
@@ -148,7 +148,7 @@ class Socket {
         return $frame;
     }
     
-    protected function decode($data) {
+    function decode($data) {
         $unmaskedPayload = '';
         $decodedData = array();
 
@@ -237,15 +237,15 @@ class Socket {
         return $decodedData;
     }
     
-    private function onOpen($connect, $info) {}
+    function onOpen($connect, $info) {}
 
-    private function onClose($connect) {}
+    function onClose($connect) {}
 
-    private function onMessage($connect, $data) {
+    function onMessage($connect, $data) {
         return $this->decode($data)['payload'];
     }
     
-    private function send($connect, $str) {
+    function send($connect, $str) {
         return fwrite($connect, $this->encode($str));
     }
 }

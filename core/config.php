@@ -9,9 +9,10 @@ $cfg = [
     'log_errors' => true,
     'error_log' => FILES_DIR . '/logs/main.log',
     'date.timezone' => 'Etc/GMT-4', // - это +
-    'is_call_500error' => true, // попробовать не менять на сокет-сервере
+    'is_call_500error' => true,
     'is_var_dump_trace' => false,
     'time_limit' => 30,
+    'domain' => 'scpt.ru',
     
     'db' => [
         'is_create_tables' => true,
@@ -23,7 +24,8 @@ $cfg = [
     
     'socket' => [
         'server_addr' => 'tcp://0.0.0.0:8000',
-        'client_addr' => '',
-        'is_log' => true
+        'client_addr' => 'ws://127.0.0.1:8000',
+        'is_log_server' => true,
+        'is_log_client' => true
     ]
 ];

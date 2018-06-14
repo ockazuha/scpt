@@ -9,7 +9,7 @@ require_once __DIR__ . '/classes/exceptions/Unknown_Exception.php';
 
 varToFunc('cfg', $cfg);
 
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin', '*');
 error_reporting(cfg('error_reporting'));
 ini_set('display_errors', cfg('display_errors'));
 ini_set('log_errors', cfg('log_errors'));

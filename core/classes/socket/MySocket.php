@@ -1,14 +1,10 @@
 <?php
 class MySocket extends Socket {
-    private $cons = [], $search_cons = [];
+    public $cons = [], $search_cons = [];
     
     const MYSOCKET_WARNING = 3;
     const MYSOCKET_SEND = 2;
     const MYSOCKET_MSG = 1;
-    
-    /*function __construct($addr) {
-        parent::__construct($addr);
-    }*/
     
     function onOpen($con, $info) {
         $this->send($con, 'hello');
@@ -41,15 +37,17 @@ class MySocket extends Socket {
                     
                     if ($group === 'other') {
                         if ($username === 'client') {
-                            $this->cons[$group][$username] = new ConData($con, new Client(), $group, $username);
+                            $this->cons[$group][$username] = new ConData($con, new Client($this), $group, $username);
                         }
                     } elseif ($group === 'users') {
-                        $this->cons[$group][$username] = new ConData($con, new User(), $group, $username);
+                        $this->cons[$group][$username] = new ConData($con, new User($this), $group, $username);
                     }
+                    
+                    $link_con_data = &$this->cons[$group][$username];
                     
                     $this->search_cons[] = [
                         'con' => $con,
-                        'data' => &$$this->cons[$group][$username]
+                        'data' => $link_con_data
                     ];
                     
                     break;
@@ -73,7 +71,7 @@ class MySocket extends Socket {
     }
     
     function log($str, $type = null) {
-        if (cfg('socket')['is_log']) {
+        if (cfg('socket')['is_log_server']) {
             $prefix = '';
             
             if ($type === self::MYSOCKET_SEND) {

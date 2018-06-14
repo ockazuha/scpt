@@ -18,7 +18,7 @@
         xhr: new XMLHttpRequest(),
         
         getJSSource: function(name) {
-            this.xhr.open('GET', 'https://' + this.domain + '/get_js_source.php?name=' + name + '&' + Math.random());
+            this.xhr.open('GET', 'https://' + this.domain + '/get_js_source.php?name=' + name + '&' + Math.random(), false);
             this.xhr.send();
             return this.xhr.responseText;
         }
