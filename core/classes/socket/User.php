@@ -1,6 +1,6 @@
 <?php
 class User extends Group {
-    function messageHandler($cmd, $data) {
+    function messageHandler($con, $cmd, $data, $num_request) {
         switch ($cmd) {
             
         }

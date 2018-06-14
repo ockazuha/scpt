@@ -1,6 +1,5 @@
-[14-Jun-2018 19:29:23 Etc/GMT-4] PHP Fatal error:  Cannot use object of type ConData as array in C:\xampp\htdocs\scpt\core\classes\socket\MySocket.php on line 16
-[14-Jun-2018 19:29:23 Etc/GMT-4] [TS_START: 1528989906.8697]
->>> Class: Fatal_Exception
->>> Message: 1: Cannot use object of type ConData as array in C:\xampp\htdocs\scpt\core\classes\socket\MySocket.php on line 16
->>> Trace: H4sIAAAAAAAAC3MsKkqs5NLgUgCCaINYBVs7BUewkAIUaMBZYCVppXnJJZn5eWCVxRmlJSn55XmoSpJzEouLwfK+la5FRflFqNIllQWpYFkrK1SJxKL0YiwOwO4QENDk4kJianIBAGSaX/rMAAAA
+[14-Jun-2018 22:48:29 Etc/GMT-4] [TS_START: 1529002045.8593]
+>>> Class: PHP_Exception
+>>> Message: 8: Uninitialized string offset: 1 in C:\xampp\htdocs\scpt\core\classes\socket\Socket.php on line 157
+>>> Trace: H4sIAAAAAAAAC9WV30/CMBDH3/dXNPEFHoRtgD+WSALoI4nR+OQMadobVEa7tJ1x/vVCB4uTUjGixPZhTe/ue+1nvXYgJS68hoeW7dF/Qld9NDBTaN0a1ci4JCwF4zWK4le8yLJ4pqkgKlYk0zEREmKSYqVgOSPIHHR8bz6tbJbVlVLGS6Wgd/4pR86JZoIbK0gp5AhrMgNZdzN5jM+4uFl51c26yEr9KKobsJwqy0btG66iSjYXdmNgjA+ccaYZTtkbUKS0ZHyKRJIo0BEK7JHhQWBWch0r0crcdezbvf9KgmKNjcqz2y/nC6zmQG9xkQpMTcgXykAEBXq9SeBe5n7LXbWm586bMKn0sNAwZBzLwuT2g8Bf9Z2RFtEPU+vh+lz8dUGF3Z6joErMu0qpFN9RSaf9w1XS9vGx8At/g9+42IOgA6DgY1AKT4/P8A6UyCUBxCg6CZ130164O0c5rp3Ln8De/M1/iNt2G38LtwL5AtL1tJ450E4mRPDlK5UTffSTrEkWtdt+y/Towve3b946wKb3DvOZqEi6CAAA
 _____________________________________________________________________________
