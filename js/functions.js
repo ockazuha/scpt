@@ -1,4 +1,4 @@
-var json = {
+json = {
     encode: function(arr) {
         return JSON.stringify(arr);
     },

@@ -11,7 +11,13 @@ class MySocket extends Socket {
     }
     
     function onClose($con) {
-        
+        foreach ($this->search_cons as $key => $c) {
+            if ($con === $c['con']) {
+                unset($this->cons[$c['data']->group][$c['data']->username]);
+                unset($this->search_cons[$key]);
+                break;
+            }
+        }
     }
     
     function onMessage($con, $s_data) {
@@ -55,7 +61,13 @@ class MySocket extends Socket {
         }
     }
     
-    function send($con, $str) {
+    function send($con, $cmd, $data = '', $json_encode = false) {
+        if ($json_encode) {
+            $data = jsonEncode($data);
+        }
+        
+        $str = "$cmd || $data";
+        
         $this->log($str, self::MYSOCKET_SEND);
         $result = parent::send($con, $str);
     }

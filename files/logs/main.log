@@ -1,0 +1,6 @@
+[14-Jun-2018 19:29:23 Etc/GMT-4] PHP Fatal error:  Cannot use object of type ConData as array in C:\xampp\htdocs\scpt\core\classes\socket\MySocket.php on line 16
+[14-Jun-2018 19:29:23 Etc/GMT-4] [TS_START: 1528989906.8697]
+>>> Class: Fatal_Exception
+>>> Message: 1: Cannot use object of type ConData as array in C:\xampp\htdocs\scpt\core\classes\socket\MySocket.php on line 16
+>>> Trace: H4sIAAAAAAAAC3MsKkqs5NLgUgCCaINYBVs7BUewkAIUaMBZYCVppXnJJZn5eWCVxRmlJSn55XmoSpJzEouLwfK+la5FRflFqNIllQWpYFkrK1SJxKL0YiwOwO4QENDk4kJianIBAGSaX/rMAAAA
+_____________________________________________________________________________
