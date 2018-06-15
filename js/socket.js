@@ -41,7 +41,7 @@ sock = {
         if (cmd.indexOf('{') === 0) {
             pos = cmd.indexOf('}');
             var num_request = cmd.substring(1, pos);
-            sock.requests[parseInt(num_request)] = true;
+            sock.requests[+num_request] = true;
             cmd.replace('{' + num_request + '}', '');
         }
         
@@ -69,7 +69,7 @@ sock = {
                 buffer_num = num_requests;
             }
             
-            var str = '{' + num_requests + '}' + (buffer.length ? (parseInt(key) === (buffer.length-1) ? '[be' + buffer_num + ']' : '[b' + buffer_num + ']') : '') + cmd + ' || ' + data;
+            var str = '{' + num_requests + '}' + (buffer.length ? (+key === (buffer.length-1) ? '[be' + buffer_num + ']' : '[b' + buffer_num + ']') : '') + cmd + ' || ' + data;
             sock.log(str, SOCK_SEND);
 
             sock.requests[num_requests] = false;

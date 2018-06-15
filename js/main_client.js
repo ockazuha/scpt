@@ -9,7 +9,7 @@ var client = {
     }
 };
 
-var sock, json;
+var sock, json, func;
 eval(client.getJSSource('functions'));
 eval(client.getJSSource('socket'));
 

@@ -26,6 +26,10 @@ class Client extends Group {
                 db()->query("UPDATE users SET $data[0]='$data[1]'");
                 $sock->sendUsers('set_status', [$data[0], $data[1]], true);
                 $this->cmdSendUsers();
+                break;
+            case 'test':
+                db()->escape_string('123');
+                break;
         }
     }
     

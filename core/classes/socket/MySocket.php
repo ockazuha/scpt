@@ -165,6 +165,12 @@ class MySocket extends Socket {
         }
     }
     
+    function sendClient($cmd, $data, $json_encode = false) {
+        if (isset($this->cons['other']['client'])) {
+            $this->send($this->cons['other']['client']->con, $cmd, $data, $json_encode);
+        }
+    }
+    
     function issetCon($con) {
         $result = $this->search($con);
         
