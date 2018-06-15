@@ -160,8 +160,10 @@ class MySocket extends Socket {
     }
     
     function sendUsers($cmd, $data = '', $json_encode = false) {
-        foreach ($this->cons['users'] as $user) {
-            $this->send($user->con, $cmd, $data, $json_encode);
+        if (isset($this->cons['users'])) {
+            foreach ($this->cons['users'] as $user) {
+                $this->send($user->con, $cmd, $data, $json_encode);
+            }
         }
     }
     
@@ -182,7 +184,7 @@ class MySocket extends Socket {
     }
     
     function log($str, $type = null) {
-        if (cfg('socket')['is_log_server']) {
+        if (cfg('socket')['is_log_server'] or $type === self::MYSOCKET_WARNING) {
             $prefix = '';
             
             if ($type === self::MYSOCKET_SEND) {

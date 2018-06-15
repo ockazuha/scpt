@@ -95,7 +95,7 @@ sock = {
     },
     
     log: function(str, type = null) {
-        if ('<?=cfg('socket')['is_log_client']?>' === '1') {
+        if ('<?=cfg('socket')['is_log_client']?>' === '1' || type === SOCK_WARNING) {
             var prefix = '';
 
             if (type === SOCK_MSG) {

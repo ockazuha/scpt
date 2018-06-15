@@ -14,7 +14,8 @@ eval(client.getJSSource('functions'));
 eval(client.getJSSource('socket'));
 
 var sett = {
-    max_time: 15
+    max_time: <?=cfg('client')['max_time']?>,
+    is_log: func.bool('<?=cfg('client')['is_log']?>'),
 };
 
 var dat = {
@@ -34,13 +35,13 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
                     $('#users table').append('\n\
                     <tr id="user' + user['num_user'] + '">\n\
                     <td>' + user['num_user'] + '</td>\n\
-                    <td><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
-                    <td><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
+                    <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
+                    <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
                     </tr>');
                 }
                 
-                $('#users table tr#user' + user['num_user']).find('button.is_display').html(user['is_display']);
-                $('#users table tr#user' + user['num_user']).find('button.is_pause').html(user['is_pause']);
+                $('#users table tr#user' + user['num_user']).find('button.is_display').html(+user['is_display'] ? 'Скрыть' : 'Показать');
+                $('#users table tr#user' + user['num_user']).find('button.is_pause').html(+user['is_pause'] ? 'Старт' : 'Пауза');
             }
             break;
         case 'capt':
@@ -57,9 +58,9 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
             $('#capts').append('\n\
             <div class="capt" id="capt' + data['id'] + '">\n\
                 <div class="types">\n\
-                    <div class="is_reg' + (+data['is_reg'] ? ' active' : '') + '">Регистр</div>\n\
-                    <div class="is_phrase' + (+data['is_phrase'] ? ' active' : '') + '">Два слова</div>\n\
-                    <div class="is_num' + (+data['is_num'] ? ' active' : '') + '">Цифры</div>\n\
+                    <div class="is_reg' + (+data['is_reg'] ? ' active' : '') + '">Регистр</div><!--\n\
+                    --><div class="is_phrase' + (+data['is_phrase'] ? ' active' : '') + '">Два слова</div><!--\n\
+                    --><div class="is_num' + (+data['is_num'] ? ' active' : '') + '">Цифры</div>\n\
                 </div>\n\
                 <div class="image" style="background-image: url(\'' + data['base64'] + '\')"></div>\n\
                 <div class="timer">' + mathTimer(data['ts_add']) + '</div>\n\

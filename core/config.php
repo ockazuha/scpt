@@ -5,7 +5,7 @@ define('FILES_DIR', __DIR__ . '/../files');
 
 $cfg = [
     'error_reporting' => -1,
-    'display_errors' => true,
+    'display_errors' => false,
     'log_errors' => true,
     'error_log' => FILES_DIR . '/logs/main.log',
     'date.timezone' => 'Etc/GMT-4', // - это +
@@ -25,9 +25,23 @@ $cfg = [
     'socket' => [
         'server_addr' => 'tcp://0.0.0.0:8000',
         'client_addr' => 'ws://127.0.0.1:8000',
-        'is_log_server' => true,
-        'is_log_client' => true,
-        'buffer_size' => 5000,
-        'timeout_check' => 2000
+        'is_log_server' => false,
+        'is_log_client' => false,
+        'buffer_size' => 7000,
+        'timeout_check' => 1000
+    ],
+    
+    'client' => [
+        'max_time' => 30,
+        'is_log' => false,
+    ],
+    
+    'userscript' => [
+        't_cpt' => 50,
+        'max_time' => 32,
+        't_check_skip' => 50,
+        'is_log' => false,
+        'max_wait_time' => 35000,
+        't_check_stop_cpt' => 50
     ]
 ];

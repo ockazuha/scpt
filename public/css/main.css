@@ -5,7 +5,14 @@
 
 body {
     font-family: Tahoma, sans-serif;
+    background-image: url('/public/images/bg.png');
 }
+
+table {
+    border-collapse: collapse;
+}
+
+/* -------------------------- */
 
 #capts .image {
     background-position: 50%;
@@ -15,16 +22,75 @@ body {
     height: 100px;
 }
 
-.types .active {
+#capts .types {
+    border: 1px solid black;
+}
+
+#capts .types div {
+    display: inline-block;
+    height: 20px;
+    width: 70px;
+}
+
+#capts .types .active {
     background-color: yellow;
 }
 
-.types div {
+/* -------------------------- */
+
+#users {
+    position: absolute;
+    bottom: 0;
+    border: 1px solid #dadada;
     display: inline-block;
-    height: 40px;
-    width: 80px;
+    font-size: 14px;
+    padding: 0px 0 7px;
+    margin: 5px;
+    background-color: #f9f9f9;
 }
 
-.types {
-    border: 1px solid black;
+#users button {
+    width: 73px;
+    height: 23px;
+    font-size: 13px;
 }
+
+#users tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+#users td {
+    height: 23px;
+}
+
+#users td:not(.btn) {
+    padding: 0 5px;
+}
+
+#users td:first-child {
+    padding-left: 10px;
+}
+
+#users td:last-child {
+    padding-right: 10px;
+}
+
+/* -------------------------- */
+
+#man {
+    width: 350px;
+    margin-bottom: 5px;
+}
+
+#man button {
+    width: 70px;
+    height: 21px;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+#man .btn {
+    display: inline-block;
+}
+
+

@@ -20,14 +20,12 @@ var ant = {
     },
     
     skip: function(id) {
-        log('skip');
         Anti.earn.workflow.skipTask();
         
         checkSkip(id);
     },
     
     startStop: function() {
-        log('start stop');
         Anti.earn.interface.playOrPause();
     }
 };
@@ -36,8 +34,6 @@ function checkSkip(id) {
     sett.is_stop_cpt = false;
     
     setTimeout(function checkSkip() {
-        log('check skip');
-
         if ((!ant.isTask() || Anti.earn.task.id !== id)) {
             sett.is_check_next_input = false;
             start();
@@ -48,13 +44,14 @@ function checkSkip(id) {
 }
 
 var sett = {
-    t_cpt: 100,
-    max_time: 17,
-    t_check_skip: 100,
-    is_log: true,
-    max_wait_time: 20000,
+    t_cpt: <?=cfg('userscript')['t_cpt']?>,
+    max_time: <?=cfg('userscript')['max_time']?>,
+    t_check_skip: <?=cfg('userscript')['t_check_skip']?>,
+    is_log: func.bool('<?=cfg('userscript')['is_log']?>'),
+    max_wait_time: <max_wait_time
     is_stop_cpt: false,
-    is_check_next_input: false
+    is_check_next_input: false,
+    t_check_stop_cpt: <?=cfg('userscript')['t_check_stop_cpt']?>
 };
 
 var dat = {
@@ -97,15 +94,19 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
             
             setTimeout(function checkStopCpt() {
                 if (sett.is_check_next_input) {
-                    $('#guesstext').val(data);
-                    Anti.earn.processor.type0.save();
                     dat.is_get_input = false;
-                    checkSkip(Anti.earn.task.id);
+                    
+                    if (ant.isTask()) {
+                        $('#guesstext').val(data);
+                        Anti.earn.processor.type0.save();
+                        checkSkip(Anti.earn.task.id);
+                    } else {
+                        start();
+                    }
                 } else {
-                    setTimeout(checkStopCpt, 100);
+                    setTimeout(checkStopCpt, sett.t_check_stop_cpt);
                 }
-            }, 100);
-            
+            }, sett.t_check_stop_cpt);
             
             break;
         case 'skip':
@@ -114,11 +115,16 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
             setTimeout(function checkStopCpt() {
                 if (sett.is_check_next_input) {
                     dat.is_get_input = false;
-                    ant.skip(Anti.earn.task.id);
+                    
+                    if (ant.isTask()) {
+                        ant.skip(Anti.earn.task.id);
+                    } else {
+                        start();
+                    }
                 } else {
-                    setTimeout(checkStopCpt, 100);
+                    setTimeout(checkStopCpt, sett.t_check_stop_cpt);
                 }
-            }, 100);
+            }, sett.t_check_stop_cpt);
             
             break;
     }
@@ -183,16 +189,15 @@ function cpt() {
         sett.is_check_next_input = true;
         return;
     }
-    //log('cpt');
+    
     if (dat.is_get_input) {
         if ((func.microtime() - dat.ts_capt) >= sett.max_time) {
-            log('истекло время');
             dat.is_get_input = false;
             ant.skip(Anti.earn.task.id);
             return;
         }
     }
-    //log('1');
+    
     if (user.is_pause) {
         if (ant.isGetTasks()) ant.startStop();
     } else {
@@ -204,14 +209,10 @@ function cpt() {
         return;
     }
    
-    //log('4');
     if (dat.is_get_input) {
-        //log('ожидание инпута');
         start();
         return;
     }
-    log('5');
-    log('добавление капчи');
     
     var ts_capt = func.microtime();
     var t = Anti.earn.task;

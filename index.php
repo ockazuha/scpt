@@ -11,21 +11,23 @@ require_once __DIR__ . '/core/static_boot.php';
 </head>
 
 <body>
-    <div id="man">
-        <button onclick="sock.send('exit')">Остановить сервер</button>
-        <button onclick="setStatusAll('is_display', true)">Показать все</button>
-        <button onclick="setStatusAll('is_display', false)">Скрыть все</button>
-        <button onclick="setStatusAll('is_pause', false)">Старт все</button>
-        <button onclick="setStatusAll('is_pause', true)">Пауза все</button>
-    </div>
-    
     <div id="users">
+        <div id="man">
+            <div class="btns">
+                <div class="btn"><button onclick="setStatusAll('is_pause', false)">Старт</button></div><!--
+                --><div class="btn"><button onclick="setStatusAll('is_pause', true)">Пауза</button></div><!--
+                --><div class="btn"><button onclick="setStatusAll('is_display', true)">Показать</button></div><!--
+                --><div class="btn"><button onclick="setStatusAll('is_display', false)">Скрыть</button></div><!--
+                --><div class="btn"><button onclick="sock.send('exit')">Стоп</button></div>
+            </div>
+        </div>
+        
         <table>
-            <thead>
-                <th>Окно</th>
-                <th>Дисплей</th>
-                <th>Пауза</th>
-            </thead>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
         </table>
     </div>
     
