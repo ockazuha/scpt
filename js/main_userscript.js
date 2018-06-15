@@ -19,18 +19,11 @@ var ant = {
         return func.bool(Anti.earn.states.requestNewTasks);
     },
     
-    skip: function() {
+    skip: function(id) {
         log('skip');
         Anti.earn.workflow.skipTask();
         
-        setTimeout(function checkSkip() {
-            log('check skip');
-            if (ant.isTask()) {
-                setTimeout(checkSkip, sett.t_check_skip);
-            } else {
-                start();
-            }
-        }, sett.t_check_skip);
+        checkSkip(id);
     },
     
     startStop: function() {
@@ -39,12 +32,29 @@ var ant = {
     }
 };
 
+function checkSkip(id) {
+    sett.is_stop_cpt = false;
+    
+    setTimeout(function checkSkip() {
+        log('check skip');
+
+        if ((!ant.isTask() || Anti.earn.task.id !== id)) {
+            sett.is_check_next_input = false;
+            start();
+        } else {
+            setTimeout(checkSkip, sett.t_check_skip);
+        }
+    }, sett.t_check_skip);
+}
+
 var sett = {
-    t_cpt: 500,
+    t_cpt: 100,
     max_time: 17,
-    t_check_skip: 500,
+    t_check_skip: 100,
     is_log: true,
-    max_wait_time: 20000
+    max_wait_time: 20000,
+    is_stop_cpt: false,
+    is_check_next_input: false
 };
 
 var dat = {
@@ -81,6 +91,35 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
             }, 4000);
             
             start();
+            break;
+        case 'input':
+            sett.is_stop_cpt = true;
+            
+            setTimeout(function checkStopCpt() {
+                if (sett.is_check_next_input) {
+                    $('#guesstext').val(data);
+                    Anti.earn.processor.type0.save();
+                    dat.is_get_input = false;
+                    checkSkip(Anti.earn.task.id);
+                } else {
+                    setTimeout(checkStopCpt, 100);
+                }
+            }, 100);
+            
+            
+            break;
+        case 'skip':
+            sett.is_stop_cpt = true;
+            
+            setTimeout(function checkStopCpt() {
+                if (sett.is_check_next_input) {
+                    dat.is_get_input = false;
+                    ant.skip(Anti.earn.task.id);
+                } else {
+                    setTimeout(checkStopCpt, 100);
+                }
+            }, 100);
+            
             break;
     }
 });
@@ -140,37 +179,38 @@ function earn() {
 }
 
 function cpt() {
-    log('cpt');
+    if (sett.is_stop_cpt) {
+        sett.is_check_next_input = true;
+        return;
+    }
+    //log('cpt');
     if (dat.is_get_input) {
         if ((func.microtime() - dat.ts_capt) >= sett.max_time) {
             log('истекло время');
             dat.is_get_input = false;
-            ant.skip();
+            ant.skip(Anti.earn.task.id);
             return;
         }
     }
-    
+    //log('1');
     if (user.is_pause) {
         if (ant.isGetTasks()) ant.startStop();
+    } else {
+        if (!ant.isGetTasks()) ant.startStop();
+    }
+    
+    if (!(ant.isTask() && ant.isOpacity())) {
         start();
         return;
     }
-    
-    if (!ant.isGetTasks()) ant.startStop();
-    
-    if (!ant.isTask() || !ant.isOpacity()) {
-        log('капчи нет');
-        dat.is_get_input = false;
-        start();
-        return;
-    }
-    
+   
+    //log('4');
     if (dat.is_get_input) {
-        log('ожидание инпута');
+        //log('ожидание инпута');
         start();
         return;
     }
-    
+    log('5');
     log('добавление капчи');
     
     var ts_capt = func.microtime();

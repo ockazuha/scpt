@@ -6,3 +6,25 @@
 body {
     font-family: Tahoma, sans-serif;
 }
+
+#capts .image {
+    background-position: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 250px;
+    height: 100px;
+}
+
+.types .active {
+    background-color: yellow;
+}
+
+.types div {
+    display: inline-block;
+    height: 40px;
+    width: 80px;
+}
+
+.types {
+    border: 1px solid black;
+}

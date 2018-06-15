@@ -1,0 +1,228 @@
+body {
+    background: #828282 url('bg.png');
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.captcha .image {
+    width: 250px;
+    height: 97px;
+    background-color: rgb(230, 230, 230);
+    background-position: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: 1px solid #636363;
+}
+
+.captcha .types {
+    width: 252px;
+    border-collapse: collapse;
+}
+
+.captcha .types td {
+    text-align: center;
+    border: 1px solid #636363;
+    border-top: none;
+    color: #ffffff00;
+    font-size: 10pt;
+    padding: 6px 0 3px 0;
+    background-color:#0000003d;
+}
+
+.captcha .is-reg,
+.captcha is-numeric {
+    width: 31%;
+}
+
+.captcha .is-phrase {
+    width: 38%;
+}
+
+.captcha .is-reg.active {
+    background-color: #ff5722;
+    color: #ffffff;
+}
+
+.captcha .is-phrase.active {
+    background-color: #8bc34a;
+    color: #ffffff;
+}
+
+.captcha .is-numeric.active {
+    background-color: #ffc107;
+    color: #ffffff;
+}
+
+#wrap-captchas {
+    white-space: nowrap;
+    padding-left: 402px;
+    padding-top: 103px;
+    left: 420px;
+    top: 100px;
+    position: absolute;
+}
+
+.captcha:nth-child(2),
+.captcha:first-child {
+    position: absolute;
+}
+
+.captcha {
+    display: inline-block;
+}
+
+.captcha:nth-child(2) .image,
+.captcha:first-child .image {
+    width: 320px;
+    height: 123px;
+}
+
+.captcha:nth-child(2) .types,
+.captcha:first-child .types {
+    width: 322px;
+}
+
+.captcha.first .types td,
+.captcha.first .types td {
+    border-top: 1px solid #636363;
+    border-bottom: none;
+    padding: 2px 0 6px 0;
+}
+
+.captcha:first-child.first,
+.captcha:nth-child(2).first {
+    top: 0;
+    left: 0;
+}
+
+.captcha:first-child.two,
+.captcha:nth-child(2).two {
+    top: 182px;
+    left: 0;
+}
+
+.captcha .id {
+    display: none;
+}
+
+#input {
+    position: absolute;
+    font-size: 14pt;
+    text-align: center;
+    width: 320px;
+    border: 1px solid #636363;
+    top: 153px;
+    left: 0;
+}
+
+.captcha:first-child .timer,
+.captcha:nth-child(2) .timer{
+    position: absolute;
+    left: 325px;
+    font-size: 18pt;
+    border: 1px solid #636363;
+    background-color: rgb(230, 230, 230);
+    width: 60px;
+    text-align: center;
+}
+
+.captcha:first-child.first .timer,
+.captcha:nth-child(2).first .timer{
+    top: 119px;
+}
+
+.captcha:first-child.two .timer,
+.captcha:nth-child(2).two .timer{
+    top: 0;
+}
+
+.captcha:first-child > .active {
+    position: absolute;
+    left: -65px;
+    width: 452px;
+    height: 149px;
+    z-index: -100;
+    
+    background: -moz-linear-gradient(left, rgba(30,87,153,0) 0%, rgba(30,87,153,0.8) 15%, rgba(30,87,153,1) 19%, rgba(30,87,153,1) 20%, rgba(41,137,216,1) 50%, rgba(30,87,153,1) 80%, rgba(30,87,153,1) 81%, rgba(30,87,153,0.8) 85%, rgba(30,87,153,0) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, rgba(30,87,153,0) 0%,rgba(30,87,153,0.8) 15%,rgba(30,87,153,1) 19%,rgba(30,87,153,1) 20%,rgba(41,137,216,1) 50%,rgba(30,87,153,1) 80%,rgba(30,87,153,1) 81%,rgba(30,87,153,0.8) 85%,rgba(30,87,153,0) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, rgba(30,87,153,0) 0%,rgba(30,87,153,0.8) 15%,rgba(30,87,153,1) 19%,rgba(30,87,153,1) 20%,rgba(41,137,216,1) 50%,rgba(30,87,153,1) 80%,rgba(30,87,153,1) 81%,rgba(30,87,153,0.8) 85%,rgba(30,87,153,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#001e5799', endColorstr='#001e5799',GradientType=1 ); /* IE6-9 */
+}
+
+#lang {
+    position: absolute;
+    left: 325px;
+    background-color: white;
+    top: 148px;
+    font-weight: bold;
+    font-size: 25px;
+    padding: 2px;
+    width: 56px;
+    text-align: center;
+    border: 1px solid #636363;
+}
+
+#accounts {
+    font-size: 11pt;
+    margin: 5px;
+    padding: 5px 2px;
+    border: 1px solid #9c9c9c;
+    white-space: nowrap;
+    width: 365px;
+    background-color: #c3c3c3;
+}
+
+#accounts td:not(:last-child) {
+    border-right: 1px solid #9c9c9c;
+}
+
+#accounts td {
+    padding: 0px 4px;
+}
+
+#accounts td:nth-child(1) {
+    width: 17px;
+}
+
+#accounts td:nth-child(2) {
+    width: 62px;
+}
+
+#accounts td:nth-child(3) {
+    width: 82px;
+}
+
+#accounts td:nth-child(4) {
+    width: 70px;
+}
+
+#accounts td:nth-child(5) {
+    width: 70px;
+}
+
+#accounts td:nth-child(6) {
+    width: 64px;
+}
+
+#accounts table {
+    border-collapse: collapse;
+}
+
+#stats {
+    border: 1px solid #9c9c9c;
+    width: 176px;
+    padding: 10px;
+    background: #c3c3c3;
+    margin: 5px;
+    font-size:  11pt;
+}
+
+#stats p {
+    margin: 0;
+    margin-bottom: 3px;
+}
+
+#stats p span {
+    float: right;
+}

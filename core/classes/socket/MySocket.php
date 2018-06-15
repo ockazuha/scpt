@@ -153,19 +153,19 @@ class MySocket extends Socket {
         return parent::send($con, $str);
     }
     
-    function sendUser($num_user, $cmd, $data, $json_encode = false) {
+    function sendUser($num_user, $cmd, $data = '', $json_encode = false) {
         if (isset($this->cons['users'][$num_user])) {
             $this->send($this->cons['users'][$num_user]->con, $cmd, $data, $json_encode);
         }
     }
     
-    function sendUsers($cmd, $data, $json_encode = false) {
+    function sendUsers($cmd, $data = '', $json_encode = false) {
         foreach ($this->cons['users'] as $user) {
             $this->send($user->con, $cmd, $data, $json_encode);
         }
     }
     
-    function sendClient($cmd, $data, $json_encode = false) {
+    function sendClient($cmd, $data = '', $json_encode = false) {
         if (isset($this->cons['other']['client'])) {
             $this->send($this->cons['other']['client']->con, $cmd, $data, $json_encode);
         }

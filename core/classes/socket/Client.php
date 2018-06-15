@@ -30,6 +30,17 @@ class Client extends Group {
             case 'test':
                 db()->escape_string('123');
                 break;
+            case 'input':
+                $data = json_decode($data);
+                $data[0] = db()->escape_string($data[0]);
+                db()->query("UPDATE captchas SET input='$data[0]' WHERE id='$data[1]'");
+                $sock->sendUser($data[2], 'input', $data[0]);
+                break;
+            case 'skip':
+                $data = json_decode($data);
+                db()->query("UPDATE captchas SET is_skip=TRUE WHERE id='$data[0]'");
+                $sock->sendUser($data[1], 'skip');
+                break;
         }
     }
     
