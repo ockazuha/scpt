@@ -69,7 +69,7 @@ sock = {
                 buffer_num = num_requests;
             }
             
-            var str = '{' + num_requests + '}' + (buffer.length ? (+key === (buffer.length-1) ? '[be' + buffer_num + ']' : '[b' + buffer_num + ']') : '') + cmd + ' || ' + data;
+            var str = '{' + num_requests + '}' + (buffer.length ? '[b' + buffer_num + '-' + buffer.length + ']' : '') + cmd + ' || ' + data;
             sock.log(str, SOCK_SEND);
 
             sock.requests[num_requests] = false;

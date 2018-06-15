@@ -1,6 +1,6 @@
 <?php
 class MySocket extends Socket {
-    public $cons = [], $search_cons = [], $requests = [], $buffer = [];
+    public $cons = [], $search_cons = [], $requests = [], $buffer = [], $check_packet = [];
     
     const MYSOCKET_MSG = 1;
     const MYSOCKET_SEND = 2;
@@ -31,7 +31,6 @@ class MySocket extends Socket {
     function parseMessage($str) {
         $data = null;
         $is_buffer = false;
-        $is_end_buffer = false;
         $result = [];
         
         $msg = explode(' || ', $str, 2);
@@ -41,19 +40,20 @@ class MySocket extends Socket {
         
         $pos = mb_strpos($cmd, '}');
         $num_request = (int)mb_substr($cmd, 1, $pos-1);
+        
         $cmd = mb_substr($cmd, $pos+1);
         
         if (mb_strpos($cmd, '[b') !== false) {
             $is_buffer = true;
-            $pos = mb_strpos($cmd, ']');
             
-            if (mb_strpos($cmd, '[be') !== false) {
-                $is_end_buffer = true;
-                $num_buffer = (int)mb_substr($cmd, 3, $pos);
-                $cmd = str_replace('[be' . $num_buffer . ']', '', $cmd);
-            } else {
-                $num_buffer = (int)mb_substr($cmd, 2, $pos);
-            }
+            
+            $pos = mb_strpos($cmd, ']');
+            $buffer_info = mb_substr($cmd, 0, $pos+1);
+            $cmd = str_replace($buffer_info, '', $cmd);
+            
+            $pos2 =  mb_strpos($buffer_info, '-');
+            $num_buffer = (int)mb_substr($buffer_info, 2, $pos2-2);
+            $buffer_length = (int)mb_substr($buffer_info, $pos2+1, $pos-($pos2+1));
         }
         
         $result = [
@@ -64,7 +64,7 @@ class MySocket extends Socket {
         ];
         
         if ($result['is_buffer']) {
-            $result['is_end_buffer'] = $is_end_buffer;
+            $result['buffer_length'] = $buffer_length;
             $result['num_buffer'] = $num_buffer;
         }
         
@@ -76,22 +76,20 @@ class MySocket extends Socket {
         extract($this->parseMessage($str));
         
         if ($is_buffer) {
-            if ($is_end_buffer) {
-                $this->buffer[$num_buffer][$num_request] = $data;
+            $this->buffer[$num_buffer][$num_request] = $data;
+            if (count($this->buffer[$num_buffer]) === $buffer_length) {
                 ksort($this->buffer[$num_buffer]);
-                
                 $data = '';
                 foreach ($this->buffer[$num_buffer] as $str_buffer) {
                     $data .= $str_buffer;
                 }
                 unset($this->buffer[$num_buffer]);
-            } else {
-                $this->buffer[$num_buffer][$num_request] = $data;
+                $is_buffer = false;
             }
         }
         
         if (isset($this->requests[(int)$con][$num_request])) {
-            $this->log('Buffer', self::MYSOCKET_WARNING);
+            $this->log('ErrorStr:' . $str, self::MYSOCKET_WARNING);
             return;
         } else {
             $this->log($str, self::MYSOCKET_MSG);
@@ -99,7 +97,7 @@ class MySocket extends Socket {
             $this->requests[(int)$con][$num_request] = true;
         }
         
-        if ($is_buffer and !$is_end_buffer) {
+        if ($is_buffer) {
             return;
         }
         

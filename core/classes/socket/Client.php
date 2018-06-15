@@ -41,6 +41,10 @@ class Client extends Group {
                 db()->query("UPDATE captchas SET is_skip=TRUE WHERE id='$data[0]'");
                 $sock->sendUser($data[1], 'skip');
                 break;
+            case 'set_discount':
+                $data = json_decode($data);
+                $sock->sendUser($data[0], 'set_discount', $data[1]);
+                break;
         }
     }
     

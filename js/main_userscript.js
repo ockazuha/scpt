@@ -48,7 +48,7 @@ var sett = {
     max_time: <?=cfg('userscript')['max_time']?>,
     t_check_skip: <?=cfg('userscript')['t_check_skip']?>,
     is_log: func.bool('<?=cfg('userscript')['is_log']?>'),
-    max_wait_time: <max_wait_time
+    max_wait_time: <?=cfg('userscript')['max_wait_time']?>,
     is_stop_cpt: false,
     is_check_next_input: false,
     t_check_stop_cpt: <?=cfg('userscript')['t_check_stop_cpt']?>
@@ -83,11 +83,26 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
             setTimeout(auth, 1000);
             setTimeout(earn, 1000);
             
+            setTimeout(function sendDiscount() {
+                if (checkTitle('KB Earn')) {
+                    sock.send('curr_discount', Anti.earn.settings.discountValue);
+                } else {
+                    setTimeout(sendDiscount, 250);
+                }
+            }, 250);
+            
             setInterval(function() {
                 if (checkTitle('KB Earn')) Anti.earn.timers.maxWaitTime = sett.max_wait_time;
             }, 4000);
             
-            start();
+            setTimeout(function checkInit() {
+                if (window && window.$$$) {
+                    start();
+                } else {
+                    setTimeout(checkInit, 250);
+                }
+            }, 250);
+            
             break;
         case 'input':
             sett.is_stop_cpt = true;
@@ -96,7 +111,7 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
                 if (sett.is_check_next_input) {
                     dat.is_get_input = false;
                     
-                    if (ant.isTask()) {
+                    if (ant.isTask() && checkTitle('KB Earn') && ant.isOpacity()) {
                         $('#guesstext').val(data);
                         Anti.earn.processor.type0.save();
                         checkSkip(Anti.earn.task.id);
@@ -116,7 +131,7 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
                 if (sett.is_check_next_input) {
                     dat.is_get_input = false;
                     
-                    if (ant.isTask()) {
+                    if (ant.isTask() && checkTitle('KB Earn') && ant.isOpacity()) {
                         ant.skip(Anti.earn.task.id);
                     } else {
                         start();
@@ -126,6 +141,12 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
                 }
             }, sett.t_check_stop_cpt);
             
+            break;
+        case 'set_discount':
+            if (checkTitle('KB Earn')) {
+                Anti.earn.workflow.setDiscount(data);
+                sock.send('curr_discount', Anti.earn.settings.discountValue);
+            }
             break;
     }
 });
@@ -187,6 +208,12 @@ function earn() {
 function cpt() {
     if (sett.is_stop_cpt) {
         sett.is_check_next_input = true;
+        return;
+    }
+    
+    if (!checkTitle('KB Earn')) {
+        dat.is_get_input = false;
+        start();
         return;
     }
     

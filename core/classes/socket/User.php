@@ -33,6 +33,9 @@ class User extends Group {
                 
                 $sock->sendClient('capt', $data, true);
                 break;
+            case 'curr_discount':
+                $sock->sendClient('curr_discount', [$this->data->username, $data], true);
+                break;
         }
     }
 }

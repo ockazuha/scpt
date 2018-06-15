@@ -37,6 +37,14 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
                     <td>' + user['num_user'] + '</td>\n\
                     <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
                     <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
+<td>\n\
+<button class="disc disc0" onclick="setDiscount(' + user['num_user'] + ', 0)">0</button><!--\n\
+--><button class="disc disc10" onclick="setDiscount(' + user['num_user'] + ', 10)">10</button><!--\n\
+--><button class="disc disc20" onclick="setDiscount(' + user['num_user'] + ', 20)">20</button><!--\n\
+--><button class="disc disc30" onclick="setDiscount(' + user['num_user'] + ', 30)">30</button><!--\n\
+--><button class="disc disc40" onclick="setDiscount(' + user['num_user'] + ', 40)">40</button><!--\n\
+--><button class="disc disc50" onclick="setDiscount(' + user['num_user'] + ', 50)">50</button>\n\
+</td>\n\
                     </tr>');
                 }
                 
@@ -69,6 +77,12 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
             </div>');
             
             dat.capts[data['id']] = data;
+            break;
+        case 'curr_discount':
+            var data = json.decode(data);
+            $('#user' + data[0]).find('.disc').attr('disabled', false);
+            $('#user' + data[0]).find('.disc' + data[1]).attr('disabled', true);
+            break;
     }
 });
 
@@ -81,6 +95,10 @@ setInterval(function() {
         else $('#capt' + capt.id).find('.timer').html(time);
     }
 }, 1000);
+
+function setDiscount(num_user, val) {
+    sock.send('set_discount', [num_user, val], true);
+}
 
 function setStatus(num_user, type) {
     sock.send('set_status', [num_user, type], true);
