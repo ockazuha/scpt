@@ -36,6 +36,9 @@ class User extends Group {
             case 'curr_discount':
                 $sock->sendClient('curr_discount', [$this->data->username, $data], true);
                 break;
+            case 'stat':
+                $sock->sendClient('stat', $data);
+                break;
         }
     }
 }

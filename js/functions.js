@@ -17,5 +17,11 @@ func = {
     microtime: function() {
         var date = new Date();
         return date.getTime() / 1000;
+    },
+    
+    fixed: function(num, len) {
+        num = parseFloat(num);
+        var pow = Math.pow(10, len);
+        return (parseInt(num*pow)/pow).toFixed(len);
     }
 };

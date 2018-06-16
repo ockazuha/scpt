@@ -41,12 +41,19 @@ table {
 #users {
     position: absolute;
     bottom: 0;
+    left: calc(50% - 500px);
     border: 1px solid #dadada;
     display: inline-block;
     font-size: 14px;
     padding: 0px 0 7px;
     margin: 5px;
     background-color: #f9f9f9;
+    width: 1000px;
+}
+
+#users table {
+    border-top: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
 }
 
 #users button {
@@ -61,6 +68,7 @@ table {
 
 #users td {
     height: 23px;
+    white-space: nowrap;
 }
 
 #users td:not(.btn) {
@@ -75,23 +83,31 @@ table {
     padding-right: 10px;
 }
 
+#users td:nth-child(even) {
+    background-color: #00000008;
+}
+
 #users .disc {
     width: 23px;
     padding: 0;
 }
 
+#users .title {
+    width: 100%;
+}
+
 /* -------------------------- */
 
 #man {
+    margin-left: calc(50% - 175px);
     width: 350px;
     margin-bottom: 5px;
 }
 
 #man button {
     width: 70px;
-    height: 21px;
-    font-size: 12px;
-    line-height: 17px;
+    height: 23px;
+    font-size: 13px;
 }
 
 #man .btn {

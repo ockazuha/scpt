@@ -26,9 +26,9 @@ $cfg = [
         'server_addr' => 'tcp://0.0.0.0:8000',
         'client_addr' => 'ws://127.0.0.1:8000',
         'is_log_server' => false,
-        'is_log_client' => true,
+        'is_log_client' => false,
         'buffer_size' => 6500,
-        'timeout_check' => 500
+        'timeout_check' => 1000//250
     ],
     
     'client' => [
@@ -37,11 +37,11 @@ $cfg = [
     ],
     
     'userscript' => [
-        't_cpt' => 50,
+        't_cpt' => 250,//50,
         'max_time' => 32,
-        't_check_skip' => 50,
+        't_check_skip' => 250,//50,
         'is_log' => false,
         'max_wait_time' => 35000,
-        't_check_stop_cpt' => 50
+        't_check_stop_cpt' => 250//50
     ]
 ];

@@ -27,6 +27,16 @@ require_once __DIR__ . '/core/static_boot.php';
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td>Сумма</td>
+                <td>Баланс</td>
+                <td>Аккум</td>
+                <td>От мод</td>
+                <td>Приоритет</td>
+                <td>Уровень</td>
+                <td>Вводов</td>
+                <td>Скипов</td>
+                <td></td>
             </tr>
         </table>
     </div>

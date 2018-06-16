@@ -92,6 +92,32 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
             }, 250);
             
             setInterval(function() {
+                var stat = {
+                    is_full_stat: false,
+                    title: document.title,
+                    num_user: userscript.num_user
+                };
+                
+                if (checkTitle('KB Earn')) {
+                    var s = Anti.earn.statisticsData;
+                    var full_stat = {
+                        is_full_stat: true,
+                        accum: s.accumulateAmount,
+                        accum_count: s.accumulateCount,
+                        balance: s.balance,
+                        priority: s.imagePriority,
+                        solved: s.solvedCount,
+                        level_perc: s.realtimeData.ratingperc,
+                        skips_left: s.skipsLeft
+                    };
+                    
+                    stat = Object.assign(stat, full_stat);
+                }
+                
+                sock.send('stat', stat, true);
+            }, 1500);
+            
+            setInterval(function() {
                 if (checkTitle('KB Earn')) Anti.earn.timers.maxWaitTime = sett.max_wait_time;
             }, 4000);
             

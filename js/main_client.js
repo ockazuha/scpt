@@ -19,7 +19,8 @@ var sett = {
 };
 
 var dat = {
-    capts: []
+    capts: [],
+    users: []
 };
 
 sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, data) {
@@ -37,7 +38,7 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
                     <td>' + user['num_user'] + '</td>\n\
                     <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
                     <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
-<td>\n\
+<td class="discs">\n\
 <button class="disc disc0" onclick="setDiscount(' + user['num_user'] + ', 0)">0</button><!--\n\
 --><button class="disc disc10" onclick="setDiscount(' + user['num_user'] + ', 10)">10</button><!--\n\
 --><button class="disc disc20" onclick="setDiscount(' + user['num_user'] + ', 20)">20</button><!--\n\
@@ -45,6 +46,16 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
 --><button class="disc disc40" onclick="setDiscount(' + user['num_user'] + ', 40)">40</button><!--\n\
 --><button class="disc disc50" onclick="setDiscount(' + user['num_user'] + ', 50)">50</button>\n\
 </td>\n\
+\n\
+<td class="sum"></td>\n\
+<td class="balance"></td>\n\
+<td class="accum"></td>\n\
+<td class="accum_count"></td>\n\
+<td class="priority"></td>\n\
+<td class="level_perc"></td>\n\
+<td class="solved"></td>\n\
+<td class="skips_left"></td>\n\
+<td class="title"></title>\n\
                     </tr>');
                 }
                 
@@ -82,6 +93,30 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
             var data = json.decode(data);
             $('#user' + data[0]).find('.disc').attr('disabled', false);
             $('#user' + data[0]).find('.disc' + data[1]).attr('disabled', true);
+            break;
+        case 'stat':
+            data = json.decode(data);
+            
+            var find = function(_class, html) {
+                $('#user'+data['num_user']).find('.'+_class).html(html);
+            };
+            
+            find('title', data.title);
+            
+            if (data.is_full_stat) {
+                find('accum', func.fixed(data.accum, 5));
+                find('accum_count', data.accum_count);
+                find('balance', func.fixed(data.balance, 2));
+                find('priority', func.fixed(data.priority, 2));
+                find('solved', data.solved);
+                find('level_perc', '+' + data.level_perc + '%');
+                find('skips_left', data.skips_left);
+                
+                find('sum', func.fixed(parseFloat(data.balance) + (parseFloat(data.accum)*+('1.' + data.level_perc)), 3));
+            }
+            
+            dat.users[data.num_user] = data;
+            
             break;
     }
 });
