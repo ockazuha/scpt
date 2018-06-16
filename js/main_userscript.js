@@ -33,6 +33,7 @@ var ant = {
 };
 
 function checkSkip(id) {
+    log('check skip');
     sett.is_stop_cpt = false;
     
     setTimeout(function checkSkip() {
@@ -139,6 +140,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, fun
             sett.is_stop_cpt = true;
             
             setTimeout(function checkStopCpt() {
+                log('check stop cpt');
                 if (sett.is_check_next_input) {
                     dat.is_get_input = false;
                     
@@ -159,6 +161,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, fun
             sett.is_stop_cpt = true;
             
             setTimeout(function checkStopCpt() {
+                log('check stop cpt 2');
                 if (sett.is_check_next_input) {
                     dat.is_get_input = false;
                     
@@ -242,6 +245,7 @@ function earn() {
 }
 
 function cpt() {
+    //log('cpt');
     if (sett.is_stop_cpt) {
         sett.is_check_next_input = true;
         return;
@@ -256,6 +260,7 @@ function cpt() {
     if (dat.is_get_input) {
         if ((func.microtime() - dat.ts_capt) >= sett.max_time) {
             dat.is_get_input = false;
+            log('skip time');
             ant.skip(Anti.earn.task.id);
             return;
         }

@@ -18,26 +18,118 @@ table {
 
 /* -------------------------- */
 
+#capts {
+    margin-left: 307px;
+    width: 975px;
+    position: static;
+    margin-top: -66px;
+}
+
+#capts .capt {
+    display: inline-block;
+}
+
 #capts .image {
-    background-position: 50%;
-    background-size: contain;
     background-repeat: no-repeat;
-    width: 250px;
-    height: 100px;
+    background-size: contain;
+    width: 200px;
+    height: 77px;
+    border: 1px solid #a9a9a9;
+}
+
+#capts .pos_bottom .image {background-position: bottom;}
+#capts .pos_top .image {background-position: top;}
+#capts .capt:first-child.pos_bottom .image {background-position: top;}
+#capts .capt:first-child.pos_top .image {background-position: bottom;}
+#capts .capt:nth-child(2).pos_top .image {background-position: bottom;}
+#capts .capt:nth-child(2).pos_bottom .image {background-position: top;}
+
+#capts .capt:first-child,
+#capts .capt:nth-child(2) {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#capts .capt.pos_bottom:nth-child(2),
+#capts .capt.pos_bottom:first-child {
+    top: 175px;
+}
+
+
+#capts .capt:first-child .image,
+#capts .capt:nth-child(2) .image {
+    width: 300px;
+    height: 116px;
 }
 
 #capts .types {
-    border: 1px solid black;
+    width: 202px;
+    font-size: 10px;
 }
 
-#capts .types div {
-    display: inline-block;
-    height: 20px;
-    width: 70px;
+#capts .info {
+    width: 202px;
+    font-size: 11px;
+}
+
+#capts .capt:first-child .types,
+#capts .capt:nth-child(2) .types {
+    width: 302px;
+    font-size: 13px;
+}
+
+#capts .capt:first-child .info,
+#capts .capt:nth-child(2) .info {
+    width: 302px;
+    font-size: 14px;
+}
+
+#capts .capt:first-child .image {
+    outline: 1px solid #a9a9a9;
+    outline-offset: 19px;
 }
 
 #capts .types .active {
-    background-color: yellow;
+    background-color: #ffeb3b;
+}
+
+#capts .types td {
+    width: 33%;
+    text-align: center;
+    padding: 1px 0 2px;
+}
+#capts .types td:nth-child(2) {width: 34%;}
+
+#capts .info td {
+    border: 1px solid #a9a9a9;
+    width: 25%;
+    text-align: center;
+}
+
+#capts .timer {
+    font-weight: bold;
+}
+
+/* -------------------------- */
+
+#input {
+    width: 300px;
+    margin-top: 155px;
+    text-align: center;
+    font-size: 16.5px;
+    /*    background-color: #fff8c5;*/
+        border: 1px solid #a9a9a9;
+}
+
+#input:focus {
+    outline: none;
+}
+
+#capts_wrap {
+    margin-left: 26.5%;
+    margin-top: 2%;
+    position: relative;
 }
 
 /* -------------------------- */
@@ -119,3 +211,6 @@ table {
 }
 
 
+.accum {
+    width: 61px;
+}

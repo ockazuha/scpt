@@ -11,18 +11,16 @@ class User extends Group {
             case 'capt':
                 $data = json_decode($data, true);
                 
-                $base64 = db()->escape_string($data['base64']);
-                
                 if (cfg('socket')['to_jpg']['is_to_jpg']) {
                     $file = FILES_DIR . '/temp_to_jpg/source/' . microtime(true);
-                    $file = base64ToFile($file, $base64);
+                    $file = base64ToFile($file, $data['base64']);
                     $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . microtime(true) . '.jpg';
                     $width = cfg('socket')['to_jpg']['width'];
                     $height = cfg('socket')['to_jpg']['height'];
                     $res = imgToJPG($file, $file_jpg, $width, $height, cfg('socket')['to_jpg']['quality']);
                     
                     if ($res === 0) {
-                        $base64 = fileToBase64($file_jpg);
+                        $data['base64'] = fileToBase64($file_jpg);
                     } else {
                         trigger_error('Error imgToJPG: ' . $res);
                     }
@@ -32,6 +30,8 @@ class User extends Group {
                         unlink($file_jpg);
                     }
                 }
+                
+                $base64 = db()->escape_string($data['base64']);
                 
                 db()->query("INSERT INTO images SET "
                         . "base64='$base64'");

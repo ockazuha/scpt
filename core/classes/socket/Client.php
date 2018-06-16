@@ -27,9 +27,6 @@ class Client extends Group {
                 $sock->sendUsers('set_status', [$data[0], $data[1]], true);
                 $this->cmdSendUsers();
                 break;
-            case 'test':
-                db()->escape_string('123');
-                break;
             case 'input':
                 $data = json_decode($data);
                 $data[0] = db()->escape_string($data[0]);
@@ -47,6 +44,9 @@ class Client extends Group {
                 break;
             case 'get_discs':
                 $sock->sendUsers('get_discs');
+                break;
+            case 'get_lang':
+                $sock->sendClient('lang', file_get_contents(FILES_DIR . '/rus_lang.txt'));
                 break;
         }
     }

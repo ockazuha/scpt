@@ -34,7 +34,7 @@ $cfg = [
         'to_jpg' => [
             'width' => 350,
             'height' => 200,
-            'quality' => 30,
+            'quality' => 70,
             'is_to_jpg' => true,
             'is_unlink' => true
         ]
@@ -51,7 +51,7 @@ $cfg = [
         'max_time' => 32,
         't_check_skip' => 100,
         'is_log' => false,
-        'max_wait_time' => 35000,
+        'max_wait_time' => 42000,
         't_check_stop_cpt' => 100,
         't_update_stat' => 750
     ]

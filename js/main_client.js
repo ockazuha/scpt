@@ -24,7 +24,7 @@ var dat = {
     users: [],
     is_init_sum: false,
     job_time: 0,
-    
+    pos_top: false // реверс
     // usd, start_sum, ts_job_time
 };
 
@@ -42,7 +42,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             var users = json.decode(data);
             for (var key in users) {
                 var user = users[key];
-                if (!$('#users table tr').is('#user' + user['num_user'])) {
+                if (!$('#users tr').is('#user' + user['num_user'])) {
                     $('#users table').append('\n\
                     <tr id="user' + user['num_user'] + '">\n\
                     <td>' + user['num_user'] + '</td>\n\
@@ -69,13 +69,23 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                     </tr>');
                 }
                 
-                $('#users table tr#user' + user['num_user']).find('button.is_display').html(+user['is_display'] ? 'Скрыть' : 'Показать');
-                $('#users table tr#user' + user['num_user']).find('button.is_pause').html(+user['is_pause'] ? 'Старт' : 'Пауза');
+                $('#user' + user['num_user']).find('.is_display').html(+user['is_display'] ? 'Скрыть' : 'Показать');
+                $('#user' + user['num_user']).find('.is_pause').html(+user['is_pause'] ? 'Старт' : 'Пауза');
             }
+            sock.send('get_lang');
             sock.send('get_discs');
+            break;
+        case 'lang':
+            if (data === '1') {
+                $('#input').css('background-color', '#fff8c5');
+            } else {
+                $('#input').css('background-color', '#fff');
+            }
             break;
         case 'capt':
             var data = json.decode(data);
+            dat.pos_top = !dat.pos_top;
+            var pos_class = 'pos_' + (dat.pos_top ? 'top' : 'bottom');
             
             if (!getNumCapts()) {
                 $('#input').val('');
@@ -85,19 +95,31 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             data['is_num'] = +data['is_num'];
             data['is_phrase'] = +data['is_phrase'];
             
+            var types = '\n\
+                <table class="types">\n\
+                    <tr>\n\
+                        <td class="is_reg' + (+data['is_reg'] ? ' active' : '') + '">Регистр</td>\n\
+                        <td class="is_phrase' + (+data['is_phrase'] ? ' active' : '') + '">Два слова</td>\n\
+                        <td class="is_num' + (+data['is_num'] ? ' active' : '') + '">Цифры</td>\n\
+                    </tr>\n\
+                </table>';
+                    
+            var info = '\n\
+                <table class="info">\n\
+                    <tr>\n\
+                        <td class="num_user">' + data['num_user'] + '</td>\n\
+                        <td class="id">' + data['id'] + '</td>\n\
+                        <td class="bid">' + (parseFloat(data['bid'])*1000000) + '</td>\n\
+                        <td class="timer">' + mathTimer(data['ts_add']) + '</td>\n\
+                    </tr>\n\
+                </table>';
+            
             $('#capts').append('\n\
-            <div class="capt" id="capt' + data['id'] + '">\n\
-                <div class="types">\n\
-                    <div class="is_reg' + (+data['is_reg'] ? ' active' : '') + '">Регистр</div><!--\n\
-                    --><div class="is_phrase' + (+data['is_phrase'] ? ' active' : '') + '">Два слова</div><!--\n\
-                    --><div class="is_num' + (+data['is_num'] ? ' active' : '') + '">Цифры</div>\n\
-                </div>\n\
-                <div class="image" style="background-image: url(\'' + data['base64'] + '\')"></div>\n\
-                <div class="timer">Timer: ' + mathTimer(data['ts_add']) + '</div>\n\
-                <div class="num_user">User: ' + data['num_user'] + '</div>\n\
-                <div>ID: <span class="id">' + data['id'] + '</span></div>\n\
-                <div class="bid">Bid: ' + data['bid'] + '</div>\n\
-            </div>');
+                <div class="capt ' + pos_class + '" id="capt' + data['id'] + '">\n\
+                    ' +  (dat.pos_top ? info + types : '') + '\n\
+                    <div class="image" style="background-image: url(\'' + data['base64'] + '\')"></div>\n\
+                    ' +  (!dat.pos_top ? types + info : '') + '\n\
+                </div>');
             
             dat.capts[data['id']] = data;
             break;
@@ -172,7 +194,9 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
 setInterval(function() {
     var sum = 0;
     for (var key in dat.users) {
-        sum += dat.users[key].sum;
+        if (dat.users[key].sum !== undefined) {
+            sum += dat.users[key].sum;
+        }
     }
     sum*=dat.usd;
     $('#users').find('.profit').html(func.fixed(sum, 2));
@@ -307,6 +331,24 @@ $(document).keydown(function(e) {
             break;
         case 32:
             send();
+            break;
+        case 119:
+            setStatusAll('is_pause', false)
+            break;
+        case 19:
+            setStatusAll('is_pause', true);
+            break;
+    }
+});
+
+setInterval(function() {
+    sock.send('get_lang');
+}, 300);
+
+$(document).keyup(function(e) {
+    switch (e.which) {
+        case 9:
+            sock.send('get_lang');
             break;
     }
 });

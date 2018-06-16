@@ -41,10 +41,14 @@ require_once __DIR__ . '/core/static_boot.php';
         </table>
     </div>
     
-    <input id="input" autofocus="">
     
-    <div id="capts">
+    
+    <div id="capts_wrap">
+        <input id="input" autofocus="">
         
+        <div id="capts">
+
+        </div>
     </div>
     
     <script src="/public/js/jquery-3.3.1.min.js"></script>
