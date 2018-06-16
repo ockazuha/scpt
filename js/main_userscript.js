@@ -1,3 +1,5 @@
+/* global userscript, Anti, sendDiscount, checkInit, checkStopCpt, checkAuth, checkEarn */
+
 var sock, json, func;
 eval(userscript.getJSSource('functions'));
 eval(userscript.getJSSource('socket'));
@@ -44,22 +46,23 @@ function checkSkip(id) {
 }
 
 var sett = {
-    t_cpt: <?=cfg('userscript')['t_cpt']?>,
-    max_time: <?=cfg('userscript')['max_time']?>,
-    t_check_skip: <?=cfg('userscript')['t_check_skip']?>,
-    is_log: func.bool('<?=cfg('userscript')['is_log']?>'),
-    max_wait_time: <?=cfg('userscript')['max_wait_time']?>,
+    t_cpt: +"<?=cfg('userscript')['t_cpt']?>",
+    max_time: +"<?=cfg('userscript')['max_time']?>",
+    t_check_skip: +"<?=cfg('userscript')['t_check_skip']?>",
+    is_log: func.bool("<?=cfg('userscript')['is_log']?>"),
+    max_wait_time: +"<?=cfg('userscript')['max_wait_time']?>",
     is_stop_cpt: false,
     is_check_next_input: false,
-    t_check_stop_cpt: <?=cfg('userscript')['t_check_stop_cpt']?>
+    t_check_stop_cpt: +"<?=cfg('userscript')['t_check_stop_cpt']?>",
+    t_update_stat: +"<?=cfg('userscript')['t_update_stat']?>"
 };
 
 var dat = {
-    is_get_input: false,
+    is_get_input: false
     //ts_capt
 };
 
-sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, function(cmd, data) {
+sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, function(cmd, data) {
     switch (cmd) {
         case 'init':
             sock.send('get_user');
@@ -115,7 +118,7 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
                 }
                 
                 sock.send('stat', stat, true);
-            }, 1500);
+            }, sett.t_update_stat);
             
             setInterval(function() {
                 if (checkTitle('KB Earn')) Anti.earn.timers.maxWaitTime = sett.max_wait_time;
@@ -173,6 +176,9 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'users', userscript.num_user, fun
                 Anti.earn.workflow.setDiscount(data);
                 sock.send('curr_discount', Anti.earn.settings.discountValue);
             }
+            break;
+        case 'get_discs':
+            sock.send('curr_discount', Anti.earn.settings.discountValue);
             break;
     }
 });
@@ -276,7 +282,8 @@ function cpt() {
         is_num: t.is_numeric,
         base64: t.body,
         url: t.url,
-        ts_add: ts_capt
+        ts_add: ts_capt,
+        bid: t.bid
     };
     
     dat.is_get_input = true;

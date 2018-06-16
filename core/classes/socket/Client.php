@@ -45,6 +45,9 @@ class Client extends Group {
                 $data = json_decode($data);
                 $sock->sendUser($data[0], 'set_discount', $data[1]);
                 break;
+            case 'get_discs':
+                $sock->sendUsers('get_discs');
+                break;
         }
     }
     

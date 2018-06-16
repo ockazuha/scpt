@@ -28,7 +28,15 @@ $cfg = [
         'is_log_server' => false,
         'is_log_client' => false,
         'buffer_size' => 6500,
-        'timeout_check' => 1000//250
+        'timeout_check' => 300,
+        
+        'to_jpg' => [
+            'width' => 350,
+            'height' => 200,
+            'quality' => 30,
+            'is_to_jpg' => true,
+            'is_unset' => true
+        ]
     ],
     
     'client' => [
@@ -37,11 +45,12 @@ $cfg = [
     ],
     
     'userscript' => [
-        't_cpt' => 250,//50,
+        't_cpt' => 75,
         'max_time' => 32,
-        't_check_skip' => 250,//50,
+        't_check_skip' => 100,
         'is_log' => false,
         'max_wait_time' => 35000,
-        't_check_stop_cpt' => 250//50
+        't_check_stop_cpt' => 100,
+        't_update_stat' => 750
     ]
 ];

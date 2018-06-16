@@ -28,5 +28,6 @@ db()->query("CREATE TABLE IF NOT EXISTS captchas ("
         . "is_phrase bool NOT NULL,"
         . "url varchar(48) NOT NULL,"
         . "is_skip bool NOT NULL,"
-        . "input varchar(32)"//unique = dublicate
+        . "input varchar(32),"//unique = dublicate
+        . "bid varchar(10) NOT NULL"
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");

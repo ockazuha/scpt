@@ -1,5 +1,5 @@
 var client = {
-    domain: '<?=cfg('domain')?>',
+    domain: "<?=cfg('domain')?>",
     xhr: new XMLHttpRequest(),
 
     getJSSource: function(name) {
@@ -14,8 +14,8 @@ eval(client.getJSSource('functions'));
 eval(client.getJSSource('socket'));
 
 var sett = {
-    max_time: <?=cfg('client')['max_time']?>,
-    is_log: func.bool('<?=cfg('client')['is_log']?>'),
+    max_time: +"<?=cfg('client')['max_time']?>",
+    is_log: func.bool("<?=cfg('client')['is_log']?>")
 };
 
 var dat = {
@@ -23,7 +23,7 @@ var dat = {
     users: []
 };
 
-sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, data) {
+sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, data) {
     switch (cmd) {
         case 'init':
             sock.send('get_users');
@@ -62,6 +62,7 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
                 $('#users table tr#user' + user['num_user']).find('button.is_display').html(+user['is_display'] ? 'Скрыть' : 'Показать');
                 $('#users table tr#user' + user['num_user']).find('button.is_pause').html(+user['is_pause'] ? 'Старт' : 'Пауза');
             }
+            sock.send('get_discs');
             break;
         case 'capt':
             var data = json.decode(data);
@@ -82,9 +83,10 @@ sock.init('<?=cfg('socket')['client_addr']?>', 'other', 'client', function(cmd, 
                     --><div class="is_num' + (+data['is_num'] ? ' active' : '') + '">Цифры</div>\n\
                 </div>\n\
                 <div class="image" style="background-image: url(\'' + data['base64'] + '\')"></div>\n\
-                <div class="timer">' + mathTimer(data['ts_add']) + '</div>\n\
-                <div class="num_user">' + data['num_user'] + '</div>\n\
-                <div class="id">' + data['id'] + '</div>\n\
+                <div class="timer">Timer: ' + mathTimer(data['ts_add']) + '</div>\n\
+                <div class="num_user">User: ' + data['num_user'] + '</div>\n\
+                <div>ID: <span class="id">' + data['id'] + '</span></div>\n\
+                <div class="bid">Bid: ' + data['bid'] + '</div>\n\
             </div>');
             
             dat.capts[data['id']] = data;
@@ -216,13 +218,15 @@ function log(str) {
 }
 
 $(document).keydown(function(e) {
-    var key = e.which;
-    
-    if (key == 13) {
-        $('#input').val($('#input').val() + ' ');
-    } else if (key == 27) {
-        skip(getFirstId());
-    } else if (key == 32) {
-        send();
+    switch (e.which) {
+        case 13:
+            $('#input').val($('#input').val() + ' ');
+            break;
+        case 27:
+            skip(getFirstId());
+            break;
+        case 32:
+            send();
+            break;
     }
 });
