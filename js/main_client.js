@@ -15,13 +15,23 @@ eval(client.getJSSource('socket'));
 
 var sett = {
     max_time: +"<?=cfg('client')['max_time']?>",
-    is_log: func.bool("<?=cfg('client')['is_log']?>")
+    is_log: func.bool("<?=cfg('client')['is_log']?>"),
+    num_users: +"<?=cfg('client')['num_users']?>"
 };
 
 var dat = {
     capts: [],
-    users: []
+    users: [],
+    is_init_sum: false,
+    job_time: 0,
+    
+    // usd, start_sum, ts_job_time
 };
+
+client.xhr.open('GET', 'https://www.cbr-xml-daily.ru/daily_json.js', false);
+client.xhr.send();
+var usd = json.decode(client.xhr.responseText);
+dat.usd = usd['Valute']['USD']['Value'];
 
 sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, data) {
     switch (cmd) {
@@ -47,14 +57,14 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
 --><button class="disc disc50" onclick="setDiscount(' + user['num_user'] + ', 50)">50</button>\n\
 </td>\n\
 \n\
-<td class="sum"></td>\n\
-<td class="balance"></td>\n\
-<td class="accum"></td>\n\
-<td class="accum_count"></td>\n\
-<td class="priority"></td>\n\
-<td class="level_perc"></td>\n\
-<td class="solved"></td>\n\
-<td class="skips_left"></td>\n\
+<td class="sum text_right"></td>\n\
+<td class="balance text_right"></td>\n\
+<td class="accum text_right"></td>\n\
+<td class="accum_count text_right"></td>\n\
+<td class="priority text_right"></td>\n\
+<td class="level_perc text_right"></td>\n\
+<td class="solved text_right"></td>\n\
+<td class="skips_left text_right"></td>\n\
 <td class="title"></title>\n\
                     </tr>');
                 }
@@ -105,23 +115,77 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             
             find('title', data.title);
             
+            dat.users[data.num_user] = data;
+            
             if (data.is_full_stat) {
-                find('accum', func.fixed(data.accum, 5));
-                find('accum_count', data.accum_count);
-                find('balance', func.fixed(data.balance, 2));
-                find('priority', func.fixed(data.priority, 2));
-                find('solved', data.solved);
-                find('level_perc', '+' + data.level_perc + '%');
-                find('skips_left', data.skips_left);
+                var sum = parseFloat(data.balance) + (parseFloat(data.accum)*+('1.' + data.level_perc));
                 
-                find('sum', func.fixed(parseFloat(data.balance) + (parseFloat(data.accum)*+('1.' + data.level_perc)), 3));
+                if (!isNaN(sum)) {
+                    find('accum', func.fixed(data.accum, 5));
+                    find('accum_count', data.accum_count);
+                    find('balance', func.fixed(data.balance, 2));
+                    find('priority', func.fixed(data.priority, 2));
+                    find('solved', data.solved);
+                    find('level_perc', data.level_perc + '%');
+                    find('skips_left', data.skips_left);
+                    find('sum', func.fixed(sum*dat.usd, 2));
+
+                    dat.users[data.num_user].sum = sum;
+                }
             }
             
-            dat.users[data.num_user] = data;
+            if (!dat.is_init_sum) {
+                var is_init_sum = true;
+                for (var i = 1; i <= sett.num_users; i++) {
+                    if (dat.users[i] === undefined) {
+                        is_init_sum = false;
+                        break;
+                    }
+                }
+
+                if (is_init_sum) {
+                    dat.start_sum = 0;
+                    var is_correct_sum = true;
+                    
+                    for (var key in dat.users) {
+                        if (dat.users[key].sum === undefined) {
+                            is_correct_sum = false;
+                            break;
+                        }
+                    }
+                    
+                    if (is_correct_sum) {
+                        for (var key in dat.users) {
+                            dat.start_sum += dat.users[key].sum;
+                        }
+
+                        dat.start_sum *= dat.usd;
+                        dat.is_init_sum = true;
+                    }
+                }
+            }
             
             break;
     }
 });
+
+setInterval(function() {
+    var sum = 0;
+    for (var key in dat.users) {
+        sum += dat.users[key].sum;
+    }
+    sum*=dat.usd;
+    $('#users').find('.profit').html(func.fixed(sum, 2));
+    if (dat.is_init_sum) {
+        var profit = sum - dat.start_sum;
+        $('#users').find('.profit_session').html(func.fixed(profit, 2));
+        
+        // var hour_speed = session_data['profit']*(3600/$data.job_time);
+        if (dat.job_time !== 0) {
+            $('#users').find('.speed_hour').html(func.fixed(profit*(3600/dat.job_time),2));
+        }
+    }
+}, 750);
 
 setInterval(function() {
     for (var key in dat.capts) {
@@ -132,6 +196,22 @@ setInterval(function() {
         else $('#capt' + capt.id).find('.timer').html(time);
     }
 }, 1000);
+
+setInterval(function() {
+    if (getNumCapts()) {
+        if (dat.ts_job_time === undefined) {
+            dat.ts_job_time = func.microtime();
+        } else {
+            dat.job_time += func.microtime() - dat.ts_job_time;
+            dat.ts_job_time = func.microtime();
+        }
+    } else {
+        if (dat.ts_job_time !== undefined) {
+            dat.job_time += func.microtime() - dat.ts_job_time;
+            dat.ts_job_time = undefined;
+        }
+    }
+}, 50);
 
 function setDiscount(num_user, val) {
     sock.send('set_discount', [num_user, val], true);

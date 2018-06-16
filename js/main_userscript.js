@@ -58,8 +58,9 @@ var sett = {
 };
 
 var dat = {
-    is_get_input: false
+    is_get_input: false,
     //ts_capt
+    isset_discount: false
 };
 
 sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, function(cmd, data) {
@@ -88,6 +89,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, fun
             
             setTimeout(function sendDiscount() {
                 if (checkTitle('KB Earn')) {
+                    dat.isset_discount = true;
                     sock.send('curr_discount', Anti.earn.settings.discountValue);
                 } else {
                     setTimeout(sendDiscount, 250);
@@ -178,7 +180,9 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'users', userscript.num_user, fun
             }
             break;
         case 'get_discs':
-            sock.send('curr_discount', Anti.earn.settings.discountValue);
+            if (dat.isset_discount) {
+                sock.send('curr_discount', Anti.earn.settings.discountValue);
+            }
             break;
     }
 });

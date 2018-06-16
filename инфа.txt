@@ -16,6 +16,7 @@ main: https://kolotibablo.com/workers/start
 в скрипте для tampermonkey указать домен софта и номер окна
 добавить закладки: домен софта и главная страница
 активировать сертификат
+! Обновить конфиг
 
 
 C:\Windows\System32\drivers\etc\hosts

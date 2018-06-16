@@ -25,9 +25,9 @@ require_once __DIR__ . '/core/static_boot.php';
         <table>
             <tr>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class="profit text_right"></td>
+                <td class="profit_session text_right"></td>
+                <td class="speed_hour text_right"></td>
                 <td>Сумма</td>
                 <td>Баланс</td>
                 <td>Аккум</td>

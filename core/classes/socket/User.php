@@ -27,9 +27,9 @@ class User extends Group {
                         trigger_error('Error imgToJPG: ' . $res);
                     }
                     
-                    if (cfg('socket')['to_jpg']['is_unset']) {
-                        unset($file);
-                        unset($file_jpg);
+                    if (cfg('socket')['to_jpg']['is_unlink']) {
+                        unlink($file);
+                        unlink($file_jpg);
                     }
                 }
                 

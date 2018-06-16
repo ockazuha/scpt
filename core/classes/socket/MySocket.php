@@ -89,7 +89,7 @@ class MySocket extends Socket {
         }
         
         if (isset($this->requests[(int)$con][$num_request])) {
-            $this->log('ErrorStr:' . $str, self::MYSOCKET_WARNING);
+            if (cfg('socket')['is_log_msg_errors']) $this->log('ErrorStr:' . $str, self::MYSOCKET_WARNING);
             return;
         } else {
             $this->log($str, self::MYSOCKET_MSG);

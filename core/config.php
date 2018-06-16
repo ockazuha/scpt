@@ -29,19 +29,21 @@ $cfg = [
         'is_log_client' => false,
         'buffer_size' => 6500,
         'timeout_check' => 300,
+        'is_log_msg_errors' => false,
         
         'to_jpg' => [
             'width' => 350,
             'height' => 200,
             'quality' => 30,
             'is_to_jpg' => true,
-            'is_unset' => true
+            'is_unlink' => true
         ]
     ],
     
     'client' => [
         'max_time' => 30,
         'is_log' => false,
+        'num_users' => 4
     ],
     
     'userscript' => [
