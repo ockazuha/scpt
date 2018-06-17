@@ -11,9 +11,23 @@ class User extends Group {
             case 'capt':
                 $data = json_decode($data, true);
                 
-                if (cfg('socket')['to_jpg']['is_to_jpg']) {
+                if (cfg('socket')['to_jpg']['is_to_jpg']) { // не выключать
                     $file = FILES_DIR . '/temp_to_jpg/source/' . microtime(true);
                     $file = base64ToFile($file, $data['base64']);
+                    $mime = $file[1];
+                    $file = $file[0];
+                    $size = getimagesize($file);
+                    $width = $size[0];
+                    $height = $size[1];
+                    
+                    $is_caps = db()->query("SELECT id FROM caps WHERE width='$width' AND height='$height' AND mime_type='$mime'")->fetch_assoc();
+                    
+                    if ($is_caps) {
+                        $id_caps = $is_caps['id'];
+                        $is_caps = true;
+                        $data['is_reg'] = false;
+                    }
+                    
                     $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . microtime(true) . '.jpg';
                     $width = cfg('socket')['to_jpg']['width'];
                     $height = cfg('socket')['to_jpg']['height'];
@@ -45,12 +59,22 @@ class User extends Group {
                         . "is_num='$data[is_num]',"
                         . "is_phrase='$data[is_phrase]',"
                         . "url='$data[url]',"
-                        . "bid='$data[bid]'");
+                        . "bid='$data[bid]',"
+                        . "width='$width',"
+                        . "height='$height',"
+                        . "mime_type='$mime',"
+                        . "is_caps='$is_caps'" . ($is_caps ? ", id_caps='$id_caps'" : '')
+                        . "");
                 
                 $captcha_id = db()->insert_id;
                 
                 $data['id'] = $captcha_id;
                 $data['num_user'] = $this->data->username;
+                $data['is_caps'] = false;
+                if ($is_caps) {
+                    $data['is_caps'] = true;
+                    $data['id_caps'] = $id_caps;
+                }
                 
                 $sock->sendClient('capt', $data, true);
                 break;

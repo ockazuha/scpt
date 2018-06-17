@@ -32,10 +32,10 @@ $cfg = [
         'is_log_msg_errors' => false,
         
         'to_jpg' => [
-            'width' => 350,
-            'height' => 200,
+            'width' => 300,
+            'height' => 116,
             'quality' => 70,
-            'is_to_jpg' => true,
+            'is_to_jpg' => true,//не выключать
             'is_unlink' => true
         ]
     ],

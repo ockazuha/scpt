@@ -14,10 +14,10 @@ require_once __DIR__ . '/core/static_boot.php';
     <div id="users">
         <div id="man">
             <div class="btns">
-                <div class="btn"><button onclick="setStatusAll('is_pause', false)">Старт</button></div><!--
-                --><div class="btn"><button onclick="setStatusAll('is_pause', true)">Пауза</button></div><!--
-                --><div class="btn"><button onclick="setStatusAll('is_display', true)">Показать</button></div><!--
+                <div class="btn"><button onclick="setStatusAll('is_display', true)">Показать</button></div><!--
                 --><div class="btn"><button onclick="setStatusAll('is_display', false)">Скрыть</button></div><!--
+                --><div class="btn"><button onclick="setStatusAll('is_pause', false)">Старт</button></div><!--
+                --><div class="btn"><button onclick="setStatusAll('is_pause', true)">Пауза</button></div><!--
                 --><div class="btn"><button onclick="sock.send('exit')">Стоп</button></div>
             </div>
         </div>
@@ -49,6 +49,10 @@ require_once __DIR__ . '/core/static_boot.php';
         <div id="capts">
 
         </div>
+    </div>
+    
+    <div id="ented">
+        
     </div>
     
     <script src="/public/js/jquery-3.3.1.min.js"></script>

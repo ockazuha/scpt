@@ -83,12 +83,13 @@ function base64ToFile($file_name, $base64) {
     // $data[ 1 ] == <actual base64 string>
     $data = explode( ',', $base64);
     $ex = explode('/', $data[0]);
-    $file_name .= '.' . explode(';', $ex[1])[0];
+    $mime = explode(';', $ex[1])[0];
+    $file_name .= '.' . $mime;
     
     $ifp = fopen( $file_name, 'wb' );
     fwrite( $ifp, base64_decode( $data[ 1 ] ) );
     fclose( $ifp );
-    return $file_name; 
+    return [$file_name, $mime];
 }
 
 function fileToBase64($file_name) {

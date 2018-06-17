@@ -38,35 +38,51 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
         case 'init':
             sock.send('get_users');
             break;
+        case 'ented':
+            data = json.decode(data);
+            $('#ented').prepend('\n\
+                <div class="ented" id="ented' + data.id + '">\n\
+                    <table class="types">\n\
+                        <tr>\n\
+                        <td' + (func.bool(data.is_reg) ? ' class="active"' : '') + '>Рег</td>\n\
+                        <td' + (func.bool(data.is_phrase) ? ' class="active"' : '') + '>Два</td>\n\
+                        <td' + (func.bool(data.is_num) ? ' class="active"' : '') + '>Цифр</td>\n\
+                        <td' + (func.bool(data.is_caps) ? ' class="active"' : '') + '>' + (func.bool(data.is_caps) ? 'CAPS' : '<button onclick="sock.send(\'add_caps\', ' + data.id + ')"></button>') + '</td>\n\
+                        </tr>\n\
+                    </table>\n\
+                    <div class="image" style="background-image: url(\'' + data.base64 + '\')"></div>\n\
+                    <div class="input">[' + data.id + '] ' + data.num_user + ': ' + (func.bool(data.is_skip) ? '-SKIP-' : data.input) + '</div>\n\
+                </td>');
+            break;
         case 'users':
             var users = json.decode(data);
             for (var key in users) {
                 var user = users[key];
                 if (!$('#users tr').is('#user' + user['num_user'])) {
                     $('#users table').append('\n\
-                    <tr id="user' + user['num_user'] + '">\n\
-                    <td>' + user['num_user'] + '</td>\n\
-                    <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
-                    <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
-<td class="discs">\n\
-<button class="disc disc0" onclick="setDiscount(' + user['num_user'] + ', 0)">0</button><!--\n\
---><button class="disc disc10" onclick="setDiscount(' + user['num_user'] + ', 10)">10</button><!--\n\
---><button class="disc disc20" onclick="setDiscount(' + user['num_user'] + ', 20)">20</button><!--\n\
---><button class="disc disc30" onclick="setDiscount(' + user['num_user'] + ', 30)">30</button><!--\n\
---><button class="disc disc40" onclick="setDiscount(' + user['num_user'] + ', 40)">40</button><!--\n\
---><button class="disc disc50" onclick="setDiscount(' + user['num_user'] + ', 50)">50</button>\n\
-</td>\n\
-\n\
-<td class="sum text_right"></td>\n\
-<td class="balance text_right"></td>\n\
-<td class="accum text_right"></td>\n\
-<td class="accum_count text_right"></td>\n\
-<td class="priority text_right"></td>\n\
-<td class="level_perc text_right"></td>\n\
-<td class="solved text_right"></td>\n\
-<td class="skips_left text_right"></td>\n\
-<td class="title"></title>\n\
-                    </tr>');
+                        <tr id="user' + user['num_user'] + '">\n\
+                            <td>' + user['num_user'] + '</td>\n\
+                            <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_pause\')" class="is_pause"></button></td>\n\
+                            <td class="btn"><button onclick="setStatus(' + user['num_user'] + ', \'is_display\')" class="is_display"></button></td>\n\
+                            <td class="discs">\n\
+                                <button class="disc disc0" onclick="setDiscount(' + user['num_user'] + ', 0)">0</button><!--\n\
+                                --><button class="disc disc10" onclick="setDiscount(' + user['num_user'] + ', 10)">10</button><!--\n\
+                                --><button class="disc disc20" onclick="setDiscount(' + user['num_user'] + ', 20)">20</button><!--\n\
+                                --><button class="disc disc30" onclick="setDiscount(' + user['num_user'] + ', 30)">30</button><!--\n\
+                                --><button class="disc disc40" onclick="setDiscount(' + user['num_user'] + ', 40)">40</button><!--\n\
+                                --><button class="disc disc50" onclick="setDiscount(' + user['num_user'] + ', 50)">50</button>\n\
+                            </td>\n\
+                            \n\
+                            <td class="sum text_right"></td>\n\
+                            <td class="balance text_right"></td>\n\
+                            <td class="accum text_right"></td>\n\
+                            <td class="accum_count text_right"></td>\n\
+                            <td class="priority text_right"></td>\n\
+                            <td class="level_perc text_right"></td>\n\
+                            <td class="solved text_right"></td>\n\
+                            <td class="skips_left text_right"></td>\n\
+                            <td class="title"></title>\n\
+                        </tr>');
                 }
                 
                 $('#user' + user['num_user']).find('.is_display').html(+user['is_display'] ? 'Скрыть' : 'Показать');
@@ -84,6 +100,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             break;
         case 'capt':
             var data = json.decode(data);
+            
             dat.pos_top = !dat.pos_top;
             var pos_class = 'pos_' + (dat.pos_top ? 'top' : 'bottom');
             
@@ -109,7 +126,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                     <tr>\n\
                         <td class="num_user">' + data['num_user'] + '</td>\n\
                         <td class="id">' + data['id'] + '</td>\n\
-                        <td class="bid">' + (parseFloat(data['bid'])*1000000) + '</td>\n\
+                        <td class="bid">' + func.fixed(parseFloat(data['bid'])*1000000, 0) + '</td>\n\
                         <td class="timer">' + mathTimer(data['ts_add']) + '</td>\n\
                     </tr>\n\
                 </table>';
@@ -289,11 +306,14 @@ function send() {
     
     var num_user = dat.capts[id].num_user;
     
+    //log('>>> ENTER: ' + id + '|"' + input + '"');
+    var send_data = [input, id, num_user, dat.capts[id].is_caps];
+    if (dat.capts[id].is_caps) send_data[4] = dat.capts[id].id_caps;
+    
     delete(dat.capts[id]);
     $('#capt' + id).remove();
     
-    log('>>> ENTER: ' + id + '|"' + input + '"');
-    sock.send('input', [input, id, num_user], true);
+    sock.send('input', send_data, true);
 }
 
 function skip(id) {

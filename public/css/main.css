@@ -20,7 +20,7 @@ table {
 
 #capts {
     margin-left: 307px;
-    width: 975px;
+    width: 409px;
     position: static;
     margin-top: -66px;
 }
@@ -90,7 +90,8 @@ table {
     outline-offset: 19px;
 }
 
-#capts .types .active {
+#capts .types .active,
+#ented .types .active {
     background-color: #ffeb3b;
 }
 
@@ -213,4 +214,40 @@ table {
 
 .accum {
     width: 61px;
+}
+
+#ented {
+    font-size: 10.4px;
+    width: 129px;
+    height: calc(100% - 171px);
+    overflow: scroll;
+    overflow-x: auto;
+    background-color:#f9f9f9;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border: 1px solid #dadada;
+}
+
+#ented .image {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 100px;
+    height: 39px;
+    border: 1px solid #a9a9a9;
+}
+
+#ented .types td {
+    padding: 2px;
+}
+
+#ented .ented {
+    padding: 5px;
+    border-bottom: 1px solid #dadada;
+    background-color: #fff;
+}
+
+#ented button {
+    height: 13px;
 }

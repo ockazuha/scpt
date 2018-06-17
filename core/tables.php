@@ -29,5 +29,18 @@ db()->query("CREATE TABLE IF NOT EXISTS captchas ("
         . "url varchar(48) NOT NULL,"
         . "is_skip bool NOT NULL,"
         . "input varchar(32),"//unique = dublicate
-        . "bid varchar(10) NOT NULL"
+        . "bid varchar(10) NOT NULL,"
+        . "is_caps bool NOT NULL,"
+        . "id_caps int UNSIGNED,"
+        . "width smallint UNSIGNED NOT NULL,"
+        . "height smallint UNSIGNED NOT NULL,"
+        . "mime_type varchar(4) NOT NULL"
+        . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
+
+db()->query("CREATE TABLE IF NOT EXISTS caps ("
+        . "id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        . "width smallint UNSIGNED NOT NULL,"
+        . "height smallint UNSIGNED NOT NULL,"
+        . "mime_type varchar(4) NOT NULL,"
+        . "count int UNSIGNED NOT NULL"
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
