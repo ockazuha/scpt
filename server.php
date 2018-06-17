@@ -13,9 +13,4 @@ set_time_limit(0);
 ob_end_clean();
 cfg('is_call_500error', false);
 
-try {
-    new MySocket(cfg('socket')['server_addr']);
-} catch (Base_Exception $e) {
-    echo "An error occurred! The work has been completed.\n";
-    throw $e;
-}
+new MySocket(cfg('socket')['server_addr']);
