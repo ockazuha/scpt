@@ -290,6 +290,16 @@ function send() {
         return;
     }
     
+    var is_only_first_part = false, is_only_second_part = false;
+    
+    if (input.indexOf('-') === 0) {
+        is_only_first_part = true;
+        input = input.substr(1);
+    } else if (input.indexOf('-') === (input.length-1)) {
+        is_only_second_part = true;
+        input = input.substr(0, input.length-1);
+    }
+    
     if (dat.capts[id]['is_num']) {
         if (input.match(/^[0-9 ]{1,32}$/) === null) {
             skip(id);
@@ -307,8 +317,17 @@ function send() {
     var num_user = dat.capts[id].num_user;
     
     //log('>>> ENTER: ' + id + '|"' + input + '"');
-    var send_data = [input, id, num_user, dat.capts[id].is_caps];
-    if (dat.capts[id].is_caps) send_data[4] = dat.capts[id].id_caps;
+    
+    var send_data = {
+        input: input,
+        id: id,
+        num_user: num_user,
+        is_caps: dat.capts[id].is_caps,
+        is_only_first_part: is_only_first_part,
+        is_only_second_part: is_only_second_part
+    };
+    
+    if (dat.capts[id].is_caps) send_data.id_caps = dat.capts[id].id_caps;
     
     delete(dat.capts[id]);
     $('#capt' + id).remove();

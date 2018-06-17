@@ -34,7 +34,9 @@ db()->query("CREATE TABLE IF NOT EXISTS captchas ("
         . "id_caps int UNSIGNED,"
         . "width smallint UNSIGNED NOT NULL,"
         . "height smallint UNSIGNED NOT NULL,"
-        . "mime_type varchar(4) NOT NULL"
+        . "mime_type varchar(4) NOT NULL,"
+        . "is_only_first_part bool NOT NULL,"
+        . "is_only_second_part bool NOT NULL"
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 db()->query("CREATE TABLE IF NOT EXISTS caps ("

@@ -28,18 +28,18 @@ class Client extends Group {
                 $this->cmdSendUsers();
                 break;
             case 'input':
-                $data = json_decode($data);
+                $data = json_decode($data, true);
                 
-                if ($data[3]) {//is_caps
-                    db()->query("UPDATE caps SET count=count+1 WHERE id='$data[4]'");
-                    $data[0] = mb_strtoupper($data[0]);
+                if ($data['is_caps']) {//is_caps
+                    db()->query("UPDATE caps SET count=count+1 WHERE id='$data[id_caps]'");
+                    $data['input'] = mb_strtoupper($data['input']);
                 }
                 
-                $data[0] = db()->escape_string($data[0]);
-                db()->query("UPDATE captchas SET input='$data[0]' WHERE id='$data[1]'");
-                $sock->sendUser($data[2], 'input', $data[0]);
+                $data['input'] = db()->escape_string($data['input']);
+                db()->query("UPDATE captchas SET input='$data[input]', is_only_first_part='$data[is_only_first_part]', is_only_second_part='$data[is_only_second_part]' WHERE id='$data[id]'");
+                $sock->sendUser($data['num_user'], 'input', $data['input']);
                 
-                $this->sendEnted($data[1]);
+                $this->sendEnted($data['id']);
                 break;
             case 'skip':
                 $data = json_decode($data);
