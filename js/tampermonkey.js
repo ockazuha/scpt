@@ -13,7 +13,7 @@
     'use strict';
 
     var userscript = {
-        domain: 'scpt.ru',
+        domain: 'localhost/scpt',
         num_user: 1,
         xhr: new XMLHttpRequest(),
         

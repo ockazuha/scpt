@@ -7,7 +7,7 @@ require_once __DIR__ . '/core/static_boot.php';
 <head>
     <meta charset="UTF-8">
     <title>scpt</title>
-    <link rel="stylesheet" href="/public/css/main.css?<?=VER?>">
+    <link rel="stylesheet" href="public/css/main.css?<?=VER?>">
 </head>
 
 <body>
@@ -55,7 +55,7 @@ require_once __DIR__ . '/core/static_boot.php';
         
     </div>
     
-    <script src="/public/js/jquery-3.3.1.min.js"></script>
-    <script src="/get_js_source?name=main_client&<?=VER?>"></script>
+    <script src="public/js/jquery-3.3.1.min.js"></script>
+    <script src="get_js_source?name=main_client&<?=VER?>"></script>
 </body>
 </html>

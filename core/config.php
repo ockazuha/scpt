@@ -12,7 +12,7 @@ $cfg = [
     'is_call_500error' => true,
     'is_var_dump_trace' => false,
     'time_limit' => 30,
-    'domain' => 'scpt.ru',
+    'domain' => 'localhost/scpt',
     
     'db' => [
         'is_create_tables' => true,
