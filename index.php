@@ -11,6 +11,10 @@ require_once __DIR__ . '/core/static_boot.php';
 </head>
 
 <body>
+    <div id="settings">
+        <input type="checkbox" id="is_save_repeats"><label for="is_save_repeats">Сохранение</label>
+    </div>
+    
     <div id="users">
         <div id="man">
             <div class="btns">

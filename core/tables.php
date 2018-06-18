@@ -47,3 +47,11 @@ db()->query("CREATE TABLE IF NOT EXISTS caps ("
         . "mime_type varchar(4) NOT NULL,"
         . "count int UNSIGNED NOT NULL"
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
+
+db()->query("CREATE TABLE IF NOT EXISTS settings ("
+        . "id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        . "name varchar(40) NOT NULL UNIQUE,"
+        . "value varchar(255)"
+        . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
+
+db()->query("INSERT IGNORE INTO settings SET name='is_save_repeats', value='0'");

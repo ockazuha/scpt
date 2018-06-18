@@ -61,6 +61,15 @@ class Client extends Group {
                 $caps = db()->query("SELECT width,height,mime_type FROM captchas WHERE id='$data'")->fetch_assoc();
                 db()->query("INSERT INTO caps SET width='$caps[width]', height='$caps[height]', mime_type='$caps[mime_type]'");
                 break;
+            case 'get_setting':
+                $data = json_decode($data, true);
+                $val = db()->query("SELECT value FROM settings WHERE name='$data[name]'")->fetch_assoc()['value'];
+                $sock->sendClient('res_get_setting', ['name' => $data['name'], 'value' => $val], true);
+                break;
+            case 'set_setting':
+                $data = json_decode($data, true);
+                if (is_bool($data['value'])) $data['value'] = (int)$data['value'];
+                db()->query("UPDATE settings SET value='$data[value]' WHERE name='$data[name]'");
         }
     }
     
