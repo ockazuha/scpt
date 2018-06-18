@@ -14,7 +14,7 @@ class MyError {
         $trace_arr = (cfg('is_var_dump_trace') ? varDump($e->getTrace()) : print_r($e->getTrace(), true));
         $trace_str = base64_encode(gzencode($trace_arr));
         
-        $log_str = "[TS_START: " . TS_START . "]\n"
+        $log_str = "[TS_START: " . TS_START . "]" . ($is_exit ? ' EXIT' : '') . "\n"
                 . ">>> Class: " . $e->getClass() . "\n"
                 . ">>> Message: " . $e->getMessage() . "\n"
                 //. "File: " . $e->getFile() . " (" . $e->getCode() . ")\n"
