@@ -42,10 +42,10 @@ class Client extends Group {
                 $this->sendEnted($data['id']);
                 break;
             case 'skip':
-                $data = json_decode($data);
-                db()->query("UPDATE captchas SET is_skip=TRUE WHERE id='$data[0]'");
-                $sock->sendUser($data[1], 'skip');
-                $this->sendEnted($data[0]);
+                $data = json_decode($data, true);
+                db()->query("UPDATE captchas SET is_skip=TRUE, is_time_skip='$data[is_end_time]' WHERE id='$data[id]'");
+                $sock->sendUser($data['num_user'], 'skip');
+                $this->sendEnted($data['id']);
                 break;
             case 'set_discount':
                 $data = json_decode($data);

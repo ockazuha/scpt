@@ -233,7 +233,7 @@ setInterval(function() {
         var capt = dat.capts[key];
         var time = mathTimer(capt.ts_add);
         
-        if (time <= 0) skip(capt.id);
+        if (time <= 0) skip(capt.id, true);
         else $('#capt' + capt.id).find('.timer').html(time);
     }
 }, 1000);
@@ -335,7 +335,7 @@ function send() {
     sock.send('input', send_data, true);
 }
 
-function skip(id) {
+function skip(id, is_end_time = false) {
     if (typeof(id) === 'string') id = +id;
     if (isNaN(id)) return;
     
@@ -347,7 +347,14 @@ function skip(id) {
     $('#capt' + id).remove();
     
     log('>>> SKIP: ' + id);
-    sock.send('skip', [id, num_user], true);
+    
+    var data_send = {
+        id: id,
+        num_user: num_user,
+        is_end_time: is_end_time
+    };
+    
+    sock.send('skip', data_send, true);
 }
 
 $('#input').focusout(function() {
