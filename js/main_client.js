@@ -154,7 +154,8 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             
             find('title', data.title);
             
-            dat.users[data.num_user] = data;
+            if (dat.users[data.num_user] === undefined) dat.users[data.num_user] = {};
+            dat.users[data.num_user] = Object.assign(dat.users[data.num_user], data);
             
             if (data.is_full_stat) {
                 var sum = parseFloat(data.balance) + (parseFloat(data.accum)*+('1.' + data.level_perc));
