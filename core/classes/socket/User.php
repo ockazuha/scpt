@@ -29,11 +29,11 @@ class User extends Group {
                     }
                     
                     $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . microtime(true) . '.jpg';
-                    $width = cfg('socket')['to_jpg']['width'];
-                    $height = cfg('socket')['to_jpg']['height'];
+                    $width_jpg = cfg('socket')['to_jpg']['width'];
+                    $height_jpg = cfg('socket')['to_jpg']['height'];
                     
                     try {
-                        $res = imgToJPG($file, $file_jpg, $width, $height, cfg('socket')['to_jpg']['quality']);
+                        $res = imgToJPG($file, $file_jpg, $width_jpg, $height_jpg, cfg('socket')['to_jpg']['quality']);
                     } catch (PHP_Exception $e) {
                         MyError::exceptionCatcher($e, false);
                         $sock->send($this->con, 'skip');
