@@ -69,6 +69,9 @@ function imgToJPG($src, $dest, &$width, &$height, $quality = 100) {
     $height = floor($size[1] * $ratio);
     $isrc = $icfunc($src);
     $idest = imagecreatetruecolor($width, $height);
+    
+    imageAlphaBlending($idest, false);
+    imageSaveAlpha($idest, true);
 
     imagecopyresampled($idest, $isrc, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
     imagejpeg($idest, $dest, $quality);
