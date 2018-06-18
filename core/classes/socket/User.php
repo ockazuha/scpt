@@ -35,8 +35,9 @@ class User extends Group {
                     try {
                         $res = imgToJPG($file, $file_jpg, $width_jpg, $height_jpg, cfg('socket')['to_jpg']['quality']);
                     } catch (PHP_Exception $e) {
-                        MyError::exceptionCatcher($e, false);
                         $sock->send($this->con, 'skip');
+                        MyError::exceptionCatcher($e, false);
+                        rename($file, FILES_DIR . '/temp_to_jpg/error_source/' . microtime(true) . '.' . pathinfo($file, PATHINFO_EXTENSION));
                         break;
                     }
                     if ($res === 0) {
