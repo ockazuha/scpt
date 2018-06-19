@@ -35,9 +35,17 @@ db()->query("CREATE TABLE IF NOT EXISTS captchas ("
         . "width smallint UNSIGNED NOT NULL,"
         . "height smallint UNSIGNED NOT NULL,"
         . "mime_type varchar(4) NOT NULL,"
-        . "is_only_first_part bool NOT NULL,"
         . "is_only_second_part bool NOT NULL,"
-        . "is_time_skip bool NOT NULL"
+        . "is_time_skip bool NOT NULL,"
+        . "hash varchar(40) NOT NULL,"
+        . "hash_one varchar(40),"
+        . "hash_two varchar(40),"
+        . "is_two bool NOT NULL,"
+        . "is_job bool NOT NULL,"
+        . "job_code smallint,"
+        . "job_id int UNSIGNED,"
+        . "image_id_one int UNSIGNED,"
+        . "image_id_two int UNSIGNED"
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 db()->query("CREATE TABLE IF NOT EXISTS caps ("
@@ -45,7 +53,7 @@ db()->query("CREATE TABLE IF NOT EXISTS caps ("
         . "width smallint UNSIGNED NOT NULL,"
         . "height smallint UNSIGNED NOT NULL,"
         . "mime_type varchar(4) NOT NULL,"
-        . "count int UNSIGNED NOT NULL"
+        . "count int UNSIGNED NOT NULL" // только на введенных капчах (не скип)
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 db()->query("CREATE TABLE IF NOT EXISTS settings ("
@@ -55,3 +63,16 @@ db()->query("CREATE TABLE IF NOT EXISTS settings ("
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 db()->query("INSERT IGNORE INTO settings SET name='is_save_repeats', value='0'");
+
+db()->query("CREATE TABLE IF NOT EXISTS repeats ("
+        . "id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        . "is_skip bool NOT NULL,"
+        . "input varchar(32),"
+        . "is_reg bool NOT NULL,"
+        . "is_num bool NOT NULL,"
+        . "is_phrase2 bool NOT NULL,"
+        . "hash varchar(40) NOT NULL,"
+        . "count int UNSIGNED NOT NULL,"
+        . "ts_add int UNSIGNED NOT NULL,"
+        . "image_id int UNSIGNED NOT NULL"
+        . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");

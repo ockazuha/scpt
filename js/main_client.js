@@ -53,7 +53,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                         </tr>\n\
                     </table>\n\
                     <div class="image" style="background-image: url(\'' + data.base64 + '\')"></div>\n\
-                    <div class="input">[' + data.id + '] ' + data.num_user + ': ' + (func.bool(data.is_skip) ? '-SKIP-' : data.input) + '</div>\n\
+                    <div class="input">[' + data.id + '] ' + data.num_user + ': ' + (func.bool(data.is_skip) ? '-SKIP-' : '"' + data.input + '"') + '</div>\n\
                 </td>');
             break;
         case 'users':
@@ -297,7 +297,7 @@ function send() {
     var id = getFirstId();
     if (isNaN(id)) return;
     
-    var input = $('#input').val().trim();
+    var input = $('#input').val().trimLeft();
     $('#input').val('');
     
     if (input === '') {
@@ -305,14 +305,11 @@ function send() {
         return;
     }
     
-    var is_only_first_part = false, is_only_second_part = false;
+    var is_only_second_part = false;
     
     if (input.indexOf('-') === 0) {
-        is_only_first_part = true;
-        input = input.substr(1);
-    } else if (input.indexOf('-') === (input.length-1)) {
         is_only_second_part = true;
-        input = input.substr(0, input.length-1);
+        input = input.substr(1);
     }
     
     if (dat.capts[id]['is_num']) {
@@ -338,8 +335,8 @@ function send() {
         id: id,
         num_user: num_user,
         is_caps: dat.capts[id].is_caps,
-        is_only_first_part: is_only_first_part,
-        is_only_second_part: is_only_second_part
+        is_only_second_part: is_only_second_part,
+        is_two: dat.capts[id].is_two
     };
     
     if (dat.capts[id].is_caps) send_data.id_caps = dat.capts[id].id_caps;
@@ -358,16 +355,19 @@ function skip(id, is_end_time = false) {
     
     var num_user = dat.capts[id].num_user;
     
-    delete(dat.capts[id]);
-    $('#capt' + id).remove();
+    
     
     log('>>> SKIP: ' + id);
     
     var data_send = {
         id: id,
         num_user: num_user,
-        is_end_time: is_end_time
+        is_end_time: is_end_time,
+        is_two: dat.capts[id].is_two
     };
+    
+    delete(dat.capts[id]);
+    $('#capt' + id).remove();
     
     sock.send('skip', data_send, true);
 }

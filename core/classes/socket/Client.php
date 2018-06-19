@@ -35,14 +35,116 @@ class Client extends Group {
                     $data['input'] = mb_strtoupper($data['input']);
                 }
                 
-                $data['input'] = db()->escape_string($data['input']);
-                db()->query("UPDATE captchas SET input='$data[input]', is_only_first_part='$data[is_only_first_part]', is_only_second_part='$data[is_only_second_part]' WHERE id='$data[id]'");
-                $sock->sendUser($data['num_user'], 'input', $data['input']);
+                $input = $data['input'];
                 
+                //is num repeats
+                if (db()->query("SELECT value FROM settings WHERE name='is_save_repeats'")->fetch_assoc()['value']) {
+                    $r_input = trim($input);
+                    
+                    $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
+                    
+                    if ($c['is_two']) {
+                        if ($c['is_job']) {
+                            $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
+                            if ($c['job_code'] === 1) {
+                                $this->addRepeat($c, $r_input, $c['hash_one'], $c['image_id_one'], (mb_strpos($r_input, ' ') !== false));
+                            } elseif ($c['job_code'] === 2) {
+                                $this->addRepeat($c, $r_input, $c['hash_two'], $c['image_id_two'], (mb_strpos($r_input, ' ') !== false));
+                            }
+                        } else {
+                            if ($data['is_only_second_part']) {
+                                $this->addRepeat($c, null, $c['hash_one'], $c['image_id_one']);
+                                $this->addRepeat($c, $r_input, $c['hash_two'], $c['image_id_two'], (mb_strpos($r_input, ' ') !== false));
+                            } else {
+                                $r_input = explode(' ', $r_input, 2);
+                                if (count($r_input) === 2) {
+                                    $this->addRepeat($c, $r_input[0], $c['hash_one'], $c['image_id_one'], (mb_strpos($r_input[0], ' ') !== false));
+                                    $this->addRepeat($c, $r_input[1], $c['hash_two'], $c['image_id_two'], (mb_strpos($r_input[1], ' ') !== false));
+                                } else {
+                                    $this->addRepeat($c, $r_input[0], $c['hash_one'], $c['image_id_one'], (mb_strpos($r_input[0], ' ') !== false));
+                                    $this->addRepeat($c, null, $c['hash_two'], $c['image_id_two']);
+                                }
+                            }
+                        }
+                    } else {
+                        $this->addRepeat($c, $r_input, $c['hash'], $c['image_id'], (mb_strpos($r_input, ' ') !== false));
+                    }
+                }//is num repeats
+                
+                if ($data['is_two']) {
+                    if (!isset($c)) {
+                        $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
+                    }
+                    
+                    if ($c['is_job']) {
+                        $input = trim($input);
+                        $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
+                        if (!$r['is_skip']) {
+                            if ($c['job_code'] === 1) {
+                                $input .= ' ' . $r['input'];
+                            } elseif ($c['job_code'] === 2) {
+                                $input =  $r['input'] . ' ' . $input;
+                            }
+                        }
+                    }
+                    
+                    if ($c['is_phrase']) {
+                        if (mb_strpos($input, ' ') === false) {
+                            $input .= ' ';
+                        }
+                    }
+                }
+                
+                db()->query("UPDATE captchas SET input='" . db()->escape_string($input) . "', is_only_second_part='$data[is_only_second_part]' WHERE id='$data[id]'");
+                $sock->sendUser($data['num_user'], 'input', $input);
                 $this->sendEnted($data['id']);
                 break;
             case 'skip':
                 $data = json_decode($data, true);
+                
+                if (!$data['is_end_time']) {
+                    if (db()->query("SELECT value FROM settings WHERE name='is_save_repeats'")->fetch_assoc()['value']) {
+                        $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
+
+                        if ($c['is_two']) {
+                            if ($c['is_job']) {
+                                $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
+                                if ($c['job_code'] === 1) {
+                                    $this->addRepeat($c, null, $c['hash_one'], $c['image_id_one']);
+                                } elseif ($c['job_code'] === 2) {
+                                    $this->addRepeat($c, null, $c['hash_two'], $c['image_id_two']);
+                                }
+                            }
+                        } else {
+                            $this->addRepeat($c, null, $c['hash'], $c['image_id']);
+                        }
+                    }//is num repeats
+                }
+                
+                if ($data['is_two']) {
+                    if (!isset($c)) {
+                        $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
+                    }
+                    
+                    if ($data['is_job']) {
+                        $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
+                        if (!$r['is_skip']) {
+                            $input = $r['input'];
+                            
+                            if ($c['is_phrase']) {
+                                if (mb_strpos($input, ' ') === false) {
+                                    $input .= ' ';
+                                }
+                            }
+                            
+                            db()->query("UPDATE captchas SET input='" . db()->escape_string($input) . "', WHERE id='$data[id]'");
+                            $sock->sendUser($data['num_user'], 'input', $input);
+                            $this->sendEnted($data['id']);
+                            break;
+                        }
+                    }
+                }
+                
                 db()->query("UPDATE captchas SET is_skip=TRUE, is_time_skip='$data[is_end_time]' WHERE id='$data[id]'");
                 $sock->sendUser($data['num_user'], 'skip');
                 $this->sendEnted($data['id']);
@@ -71,6 +173,17 @@ class Client extends Group {
                 if (is_bool($data['value'])) $data['value'] = (int)$data['value'];
                 db()->query("UPDATE settings SET value='$data[value]' WHERE name='$data[name]'");
         }
+    }
+    
+    function addRepeat($c, $input, $hash, $image_id, $is_phrase2 = false) {
+        db()->query("INSERT INTO repeats SET "
+                . ($input === null ? "is_skip=TRUE" : "input='" . db()->escape_string($input) . "'") . ","
+                . "is_reg='$c[is_reg]',"
+                . "is_num='$c[is_num]',"
+                . "is_phrase2='$is_phrase2',"
+                . "hash='$hash',"
+                . "ts_add=UNIX_TIMESTAMP(),"
+                . "image_id='$image_id'");
     }
     
     function cmdSendUsers() {
