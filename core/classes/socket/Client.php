@@ -126,7 +126,7 @@ class Client extends Group {
                         $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
                     }
                     
-                    if ($data['is_job']) {
+                    if ($c['is_job']) {
                         $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
                         if (!$r['is_skip']) {
                             $input = $r['input'];
