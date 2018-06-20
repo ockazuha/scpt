@@ -10,74 +10,47 @@ class User extends Group {
                 break;
             case 'capt':
                 $data = json_decode($data, true);
-                $data['is_reg'] = (bool)$data['is_reg'];
-                $data['is_num'] = (bool)$data['is_num'];
-                $data['is_phrase'] = (bool)$data['is_phrase'];
-                
-                if ($data['is_reg'] and $data['is_num']) $data['is_reg'] = false;
-                
-                $keys = '' . (int)$data['is_reg'] . (int)$data['is_phrase'] . (int)$data['is_num'];
-                
+                $keys = $this->normalizeKeysAndGenStrKeys($data['is_reg'], $data['is_phrase'], $data['is_num']);
                 $file_microtime = microtime(true);
-                //if (cfg('socket')['to_jpg']['is_to_jpg']) { // не выключать
+                $is_to_jpg = cfg('socket')['to_jpg']['is_to_jpg'];
+                
                 $file = FILES_DIR . '/temp_to_jpg/source/' . $file_microtime;
-                $file = base64ToFile($file, $data['base64']);
+                $file = base64ToFile($file, $base64);
                 $mime = $file[1];
                 $file = $file[0];
                 $size = getimagesize($file);
                 $width = $size[0];
                 $height = $size[1];
-
-                $is_caps = db()->query("SELECT id FROM caps WHERE width='$width' AND height='$height' AND mime_type='$mime'")->fetch_assoc();
-
-                if ($is_caps) {
-                    $id_caps = $is_caps['id'];
-                    $is_caps = true;
+                
+                if ($is_to_jpg) {
+                    try {
+                        extract($this->imgToJPG($file_microtime, $file, $size));
+                    } catch (Base_Exception $e) {
+                        $sock->send($this->con, 'skip');
+                        MyError::exceptionCatcher($e, false);
+                        break;
+                    }
+                    
+                    $data['base64'] = fileToBase64($file_jpg);
+                } else {
+                    $file_jpg = $file;
+                    $width_jpg = $width;
+                    $height_jpg = $height;
                 }
-
-                $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . $file_microtime . '.jpg';
-                $width_jpg = cfg('socket')['to_jpg']['width'];
-                $height_jpg = cfg('socket')['to_jpg']['height'];
-
-                try {
-                    $res = imgToJPG($file, $file_jpg, $size, [$width_jpg, $height_jpg], cfg('socket')['to_jpg']['quality']);
-                } catch (PHP_Exception $e) {
-                    $sock->send($this->con, 'skip');
-                    MyError::exceptionCatcher($e, false);
-                    rename($file, FILES_DIR . '/temp_to_jpg/error_source/' . $file_microtime . '.' . pathinfo($file, PATHINFO_EXTENSION));
-                    break;
-                }
-
-                if ($res !== 0) {
-                    $sock->send($this->con, 'skip');
-                    MyError::exceptionCatcher(new Base_Exception('Error imgToJPG: ' . $res), false);
-                    break;
-                }
-
-                $data['base64'] = fileToBase64($file_jpg);
-                $hash = md5($data['base64']) . $width . $height;
                 
                 if (!($width === 320 and $height === 50)) {
                     $is_two = false;
                 } else {
                     $is_two = true;
-                    $file_one = FILES_DIR . '/temp_to_jpg/one/' . $file_microtime . '.jpg';
-                    $file_two = FILES_DIR . '/temp_to_jpg/two/' . $file_microtime . '.jpg';
-                    copy($file_jpg, $file_one);
-                    copy($file_jpg, $file_two);
-                    
-                    crop($file_one, 0, 0, $width_jpg/2, $height_jpg);
-                    $base64_one = fileToBase64($file_one);
-                    crop($file_two, $width_jpg/2, 0, $width_jpg/2, $height_jpg);
-                    $base64_two = fileToBase64($file_two);
-                    
-                    $base64_one_hash = md5($base64_one);
-                    $base64_two_hash = md5($base64_two);
+                    extract($this->parseTwo($file_microtime, $file_jpg, $width_jpg, $height_jpg));
                 }
                 
                 if (cfg('socket')['to_jpg']['is_unlink']) {
                     unlink($file);
-                    unlink($file_jpg);
+                    if ($is_to_jpg) {
+                        unlink($file_jpg);
+                    }
+
                     if ($is_two) {
                         unlink($file_one);
                         unlink($file_two);
@@ -85,31 +58,23 @@ class User extends Group {
                 }
                 //}
                 
-                $hash = md5($data['base64']) . "$width$height";
+                $hash = md5($data['base64']) . "{$width}{$height}";
+                
+                $is_caps = db()->query("SELECT id FROM caps WHERE width='$width' AND height='$height' AND mime_type='$mime'")->fetch_assoc();
+
+                if ($is_caps) {
+                    $id_caps = $is_caps['id'];
+                    $is_caps = true;
+                }
+                
+                $hash = md5($data['base64']) . "{$width}{$height}";
                 
                 if ($is_two) {
-                    $hash_one = "$base64_one_hash$width$height";
-                    $hash_two = "$base64_two_hash$width$height";
+                    $hash_one = "{$base64_one_hash}{$width}{$height}";
+                    $hash_two = "{$base64_two_hash}{$width}{$height}";
                     
-                    $r_query = '';
-                    switch ($keys) {
-                        case '000':
-                            break;
-                        case '001':
-                            $r_query .= " AND is_num=TRUE";
-                            break;
-                        case '010':
-                            break;
-                        case '100':
-                            $r_query .= " AND is_reg=TRUE";
-                            break;
-                        case '011':
-                            $r_query .= " AND is_num=TRUE";
-                            break;
-                    }
-                    
-                    $r1 = db()->query("SELECT id,is_skip,input,is_phrase2,image_id FROM repeats WHERE hash='$hash_one'" . $r_query)->fetch_assoc();
-                    $r2 = db()->query("SELECT id,is_skip,input,is_phrase2,image_id FROM repeats WHERE hash='$hash_two'" . $r_query)->fetch_assoc();
+                    $r1 = $this->getRepeat($hash_one, $keys);
+                    $r2 = $this->getRepeat($hash_two, $keys);
                     
                     if ($r1 and $r2) {
                         db()->query("UPDATE repeats SET count=count+1 WHERE id='$r1[id]'");
@@ -162,24 +127,7 @@ class User extends Group {
                         $job_id = $r2['id'];
                     }
                 } else {
-                    $r_query = '';
-                    switch ($keys) {
-                        case '000':
-                            break;
-                        case '001':
-                            $r_query .= " AND is_num=TRUE";
-                            break;
-                        case '010':
-                            break;
-                        case '100':
-                            $r_query .= " AND is_reg=TRUE";
-                            break;
-                        case '011':
-                            $r_query .= " AND is_num=TRUE";
-                            break;
-                    }
-                    
-                    $r = db()->query("SELECT id,is_skip,input,is_phrase2,image_id FROM repeats WHERE hash='$hash'" . $r_query)->fetch_assoc();
+                    $r = $this->getRepeat($hash, $keys);
                     
                     if ($r) {
                         db()->query("UPDATE repeats SET count=count+1 WHERE id='$r[id]'");
@@ -265,12 +213,13 @@ class User extends Group {
                 
                 $data['id'] = $captcha_id;
                 $data['num_user'] = $this->data->username;
-                $data['is_caps'] = false;
                 $data['is_two'] = $is_two;
                 
                 if ($is_caps) {
                     $data['is_caps'] = true;
                     $data['id_caps'] = $id_caps;
+                } else {
+                    $data['is_caps'] = false;
                 }
                 
                 $sock->sendClient('capt', $data, true);
@@ -282,5 +231,79 @@ class User extends Group {
                 $sock->sendClient('stat', $data);
                 break;
         }
+    }
+    
+    function getRepeat($hash, $keys) {
+        $r_query = '';
+        switch ($keys) {
+            case '001':
+                $r_query .= " AND is_num=TRUE";
+                break;
+            case '100':
+                $r_query .= " AND is_reg=TRUE";
+                break;
+            case '011':
+                $r_query .= " AND is_num=TRUE";
+                break;
+        }
+        
+        return db()->query("SELECT id,is_skip,input,is_phrase2,image_id FROM repeats WHERE hash='$hash'" . $r_query)->fetch_assoc();
+    }
+    
+    function normalizeKeysAndGenStrKeys(&$is_reg, &$is_phrase, &$is_num) {
+        $is_reg = (bool)$is_reg;
+        $is_num = (bool)$is_num;
+        $is_phrase = (bool)$is_phrase;
+
+        if ($is_reg and $is_num) {
+            $is_reg = false;
+        }
+
+        return (int)$is_reg . (int)$is_phrase . (int)$is_num;
+    }
+    
+    function imgToJPG($file_microtime, $file, $size) {
+        $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . $file_microtime . '.jpg';
+        $width_jpg = cfg('socket')['to_jpg']['width'];
+        $height_jpg = cfg('socket')['to_jpg']['height'];
+
+        try {
+            $res = imgToJPG($file, $file_jpg, $size, [$width_jpg, $height_jpg], cfg('socket')['to_jpg']['quality']);
+        } catch (PHP_Exception $e) {
+            rename($file, FILES_DIR . '/temp_to_jpg/error_source/' . $file_microtime . '.' . pathinfo($file, PATHINFO_EXTENSION));
+            throw $e;
+        }
+
+        if ($res !== 0) {
+            throw new Base_Exception('Error imgToJPG: ' . $res);
+        }
+        
+        return [
+            'file_jpg' => $file_jpg,
+            'width_jpg' => $width_jpg,
+            'height_jpg' => $height_jpg
+        ];
+    }
+    
+    function parseTwo($file_microtime, $file, $width, $height) {
+        $file_one = FILES_DIR . '/temp_to_jpg/one/' . $file_microtime . '.jpg';
+        $file_two = FILES_DIR . '/temp_to_jpg/two/' . $file_microtime . '.jpg';
+        copy($file, $file_one);
+        copy($file, $file_two);
+
+        crop($file_one, 0, 0, $width/2, $height);
+        $base64_one = fileToBase64($file_one);
+        crop($file_two, $width/2, 0, $width/2, $height);
+        $base64_two = fileToBase64($file_two);
+
+        $base64_one_hash = md5($base64_one);
+        $base64_two_hash = md5($base64_two);
+        
+        return [
+            'base64_one' => $base64_one,
+            'base64_two' => $base64_two,
+            'base64_one_hash' => $base64_one_hash,
+            'base64_two_hash' => $base64_two_hash
+        ];
     }
 }
