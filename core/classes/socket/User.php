@@ -41,7 +41,7 @@ class User extends Group {
                 $height_jpg = cfg('socket')['to_jpg']['height'];
 
                 try {
-                    $res = imgToJPG($file, $file_jpg, $width_jpg, $height_jpg, cfg('socket')['to_jpg']['quality']);
+                    $res = imgToJPG($file, $file_jpg, $size, [$width_jpg, $height_jpg], cfg('socket')['to_jpg']['quality']);
                 } catch (PHP_Exception $e) {
                     $sock->send($this->con, 'skip');
                     MyError::exceptionCatcher($e, false);

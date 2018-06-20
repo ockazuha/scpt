@@ -35,50 +35,56 @@ function clearNullByte($str) {
     return preg_replace('/\0/s', '', $str);
 }
 
-/***********************************************************************************
-Функция img_resize(): генерация thumbnails
-Параметры:
-  $src             - имя исходного файла
-  $dest            - имя генерируемого файла (тип файла будет JPEG)
-  $width, $height  - максимальные ширина и высота генерируемого изображения, в пикселях (по ссылке!)
-Необязательные параметры:
-  $quality         - качество генерируемого JPEG, по умолчанию - максимальное (100)
-***********************************************************************************/
-function imgToJPG($src, $dest, &$width, &$height, $quality = 100) {
-    if (!file_exists($src))
-        return 1; // исходный файля не найден
-    $size = getimagesize($src);
-    if ($size === false)
-        return 2; // не удалось получить параметры файла
-
-        
-// Определяем исходный формат по MIME-информации и выбираем соответствующую imagecreatefrom-функцию.
-    $format = strtolower(substr($size['mime'], strpos($size['mime'], '/') + 1));
-    $icfunc = "imagecreatefrom" . $format;
-    if (!function_exists($icfunc))
-        return 3; // не существует подходящей функции преобразования
-
-        
-// Определяем необходимость преобразования размера
-    if ($width < $size[0] || $height < $size[1])
-        $ratio = min($width / $size[0], $height / $size[1]);
-    else
-        $ratio = 1;
-
-    $width = floor($size[0] * $ratio);
-    $height = floor($size[1] * $ratio);
-    $isrc = $icfunc($src);
-    $idest = imagecreatetruecolor($width, $height);
+function imgToJPG($input_file, $output_file, $imagesize = null, $new_size = null, $quality = 90) {
+    if (!file_exists($input_file)) return 1;
+    if (!isset($imagesize)) $imagesize = getimagesize($input_file);
+    if ($imagesize === false) return 2;
     
-    imageAlphaBlending($idest, false);
-    imageSaveAlpha($idest, true);
+    $width = $imagesize[0];
+    $height = $imagesize[1];
+    
+    $mime = strtolower(substr($imagesize['mime'], strpos($imagesize['mime'], '/') + 1));
+    $func = "imagecreatefrom{$mime}";
+    if (!function_exists($func)) return 3;
+    
+    if (isset($new_size)) {
+        if ($new_size[0] < $width || $new_size[1] < $height) {
+            $ratio = min($new_size[0] / $width, $new_size[1] / $height);
+        } else {
+            $ratio = 1;
+        }
 
-    imagecopyresampled($idest, $isrc, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
-    imagejpeg($idest, $dest, $quality);
-    chmod($dest, 0666);
-    imagedestroy($isrc);
-    imagedestroy($idest);
-    return 0; // успешно
+        $new_width = floor($width * $ratio);
+        $new_height = floor($height * $ratio);
+    } else {
+        $new_width = $width;
+        $new_height = $height;
+    }
+    
+    $input = $func($input_file);
+    $output = imagecreatetruecolor($new_width, $new_height);
+    $resize = imagecreatetruecolor($new_width, $new_height);
+    
+    $trans = ($mime === 'png' or $mime === 'gif');
+    
+    if ($trans) {
+        imagealphablending($resize, false);
+        imagesavealpha($resize, true);
+    }
+    
+    imagecopyresampled($resize, $input, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+    
+    if ($trans) {
+        $white = imagecolorallocate($output,  255, 255, 255);
+        imagefilledrectangle($output, 0, 0, $new_width, $new_height, $white);
+        imagecopy($output, $resize, 0, 0, 0, 0, $new_width, $new_height);
+        
+        imagejpeg($output, $output_file, $quality);
+    } else {
+        imagejpeg($resize, $output_file, $quality);
+    }
+    
+    return 0;
 }
 
 function crop($image, $x_o, $y_o, $w_o, $h_o) {
