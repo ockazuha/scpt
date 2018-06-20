@@ -33,7 +33,6 @@ class User extends Group {
                 if ($is_caps) {
                     $id_caps = $is_caps['id'];
                     $is_caps = true;
-                    $data['is_reg'] = false;
                 }
 
                 $file_jpg = FILES_DIR . '/temp_to_jpg/jpg/' . $file_microtime . '.jpg';

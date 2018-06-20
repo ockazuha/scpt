@@ -122,7 +122,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                 $('#input').val('');
             }
             
-            data['is_reg'] = +data['is_reg'];
+            data['is_reg'] = (data.is_caps ? +false : +data['is_reg']);
             data['is_num'] = +data['is_num'];
             data['is_phrase'] = +data['is_phrase'];
             
