@@ -56,7 +56,6 @@ class User extends Group {
                         unlink($file_two);
                     }
                 }
-                //}
                 
                 $hash = md5($data['base64']) . "{$width}{$height}";
                 

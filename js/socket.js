@@ -20,6 +20,8 @@ sock = {
         this.h = new WebSocket(addr);
         this.h.onopen = this.onOpen; 
         this.h.onmessage = this.onMessage;
+        this.h.onerror = this.onError;
+        this.h.onclose = this.onClose;
     },
     
     onOpen: function() {
@@ -94,6 +96,19 @@ sock = {
         } else {
             send(data);
         }
+    },
+    
+    onError: function(error) {
+        alert('socket error:' . error);
+    },
+    
+    onClose: function(event) {
+        if (event.wasClean) {
+            alert('Соединение закрыто чисто');
+        } else {
+            alert('Обрыв соединения'); // например, "убит" процесс сервера
+        }
+        alert('Код: ' + event.code + ' причина: ' + event.reason);
     },
     
     log: function(str, type = null) {
