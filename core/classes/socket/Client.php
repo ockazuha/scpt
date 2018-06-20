@@ -163,6 +163,10 @@ class Client extends Group {
                 $caps = db()->query("SELECT width,height,mime_type FROM captchas WHERE id='$data'")->fetch_assoc();
                 db()->query("INSERT INTO caps SET width='$caps[width]', height='$caps[height]', mime_type='$caps[mime_type]'");
                 break;
+            case 'del_repeat':
+                db()->query("DELETE FROM repeats WHERE id='$data'");
+                $sock->sendClient('del_repeat', $data);
+                break;
             case 'get_setting':
                 $data = json_decode($data, true);
                 $val = db()->query("SELECT value FROM settings WHERE name='$data[name]'")->fetch_assoc()['value'];
@@ -184,6 +188,22 @@ class Client extends Group {
                 . "hash='$hash',"
                 . "ts_add=UNIX_TIMESTAMP(),"
                 . "image_id='$image_id'");
+        
+        $id = db()->insert_id;
+        
+        $base64 = db()->query("SELECT base64 FROM images WHERE id='$image_id'")->fetch_assoc()['base64'];
+        
+        $data = [
+            'is_skip' => ($input === null ? true : false),
+            'input' => $input,
+            'base64' => $base64,
+            'id' => $id,
+            'is_reg' => $c['is_reg'],
+            'is_num' => $c['is_num'],
+            'is_phrase2' => $is_phrase2
+        ];
+        
+        $this->socket->send($this->con, 'add_repeat', $data, true);
     }
     
     function cmdSendUsers() {

@@ -216,7 +216,7 @@ table {
     width: 61px;
 }
 
-#ented {
+#ented, #repeats {
     font-size: 10.4px;
     width: 129px;
     height: calc(100% - 171px);
@@ -224,12 +224,20 @@ table {
     overflow-x: auto;
     background-color:#f9f9f9;
     position: absolute;
-    top: 5px;
-    left: 5px;
     border: 1px solid #dadada;
+    top: 5px;
 }
 
-#ented .image {
+#ented {
+    left: 5px;
+}
+
+#repeats {
+    left: 139px;
+}
+
+#ented .image,
+#repeats .image{
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -238,20 +246,23 @@ table {
     border: 1px solid #a9a9a9;
 }
 
-#ented .types td {
+#ented .types td,
+#repeats .types td{
     padding: 2px;
 }
 
-#ented .ented {
+#ented .ented,
+#repeats .repeat {
     padding: 5px;
     border-bottom: 1px solid #dadada;
     background-color: #fff;
 }
 
-#ented button {
+#ented button,
+#repeats button {
     height: 13px;
 }
 
 #settings {
-    margin-left: 150px;
+    margin-left: 273px;
 }

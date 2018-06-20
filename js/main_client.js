@@ -56,6 +56,25 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                     <div class="input">[' + data.id + '] ' + data.num_user + ': ' + (func.bool(data.is_skip) ? '-SKIP-' : '"' + data.input + '"') + '</div>\n\
                 </td>');
             break;
+        case 'add_repeat':
+            data = json.decode(data);
+            $('#repeats').prepend('\n\
+                <div class="repeat" id="repeat' + data.id + '">\n\
+                    <table class="types">\n\
+                        <tr>\n\
+                            <td' + (func.bool(data.is_reg) ? ' class="active"' : '') + '>Рег</td>\n\
+                            <td' + (func.bool(data.is_phrase2) ? ' class="active"' : '') + '>Два</td>\n\
+                            <td' + (func.bool(data.is_num) ? ' class="active"' : '') + '>Цифр</td>\n\
+                            <td><button onclick="sock.send(\'del_repeat\', ' + data.id + ')"></button></td>\n\
+                        </tr>\n\
+                    </table>\n\
+                    <div class="image" style="background-image: url(\'' + data.base64 + '\')"></div>\n\
+                    <div class="input">[' + data.id + ']: ' + (func.bool(data.is_skip) ? '-SKIP-' : '"' + data.input + '"') + '</div>\n\
+                </div>');
+            break;
+        case 'del_repeat':
+            $('#repeat' + data).remove();
+            break;
         case 'users':
             var users = json.decode(data);
             for (var key in users) {

@@ -15,7 +15,7 @@ class User extends Group {
                 $is_to_jpg = cfg('socket')['to_jpg']['is_to_jpg'];
                 
                 $file = FILES_DIR . '/temp_to_jpg/source/' . $file_microtime;
-                $file = base64ToFile($file, $base64);
+                $file = base64ToFile($file, $data['base64']);
                 $mime = $file[1];
                 $file = $file[0];
                 $size = getimagesize($file);
@@ -147,6 +147,8 @@ class User extends Group {
                         break;
                     }
                 }
+                
+                if (!isset($is_job)) $is_job = false;
                 
                 if (!isset($image_id)) {
                     db()->query("INSERT INTO images SET base64='" . db()->escape_string($data['base64']) . "'");
@@ -307,6 +309,8 @@ class User extends Group {
         $base64_two_hash = md5($base64_two);
         
         return [
+            'file_one' => $file_one,
+            'file_two' => $file_two,
             'base64_one' => $base64_one,
             'base64_two' => $base64_two,
             'base64_one_hash' => $base64_one_hash,
