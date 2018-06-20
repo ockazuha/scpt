@@ -221,6 +221,14 @@ class User extends Group {
                     $data['is_caps'] = false;
                 }
                 
+                if ($is_job) {
+                    if ($job_code === 1) {
+                        $data['base64'] = $base64_one;
+                    } elseif ($job_code === 2) {
+                        $data['base64'] = $base64_two;
+                    }
+                }
+                
                 $sock->sendClient('capt', $data, true);
                 break;
             case 'curr_discount':
