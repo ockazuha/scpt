@@ -16,6 +16,7 @@ class User extends Group {
                 $is_to_jpg = cfg('socket')['to_jpg']['is_to_jpg'];
                 
                 $file = FILES_DIR . '/temp_to_jpg/source/' . $file_microtime;
+                if (!isset($data['base64'])) break;
                 $file = base64ToFile($file, $data['base64']);
                 $mime = $file[1];
                 $file = $file[0];
@@ -51,11 +52,11 @@ class User extends Group {
                     }
                 }*/
                 
-                if (!($width === 320 and $height === 50)) {
-                    $is_two = false;
-                } else {
+                if (($width === 320 and $height === 50) or ($width === 200 and $height === 60 and $mime === 'png')) {
                     $is_two = true;
                     extract($this->parseTwo($file_microtime, $file_jpg, $width_jpg, $height_jpg));
+                } else {
+                    $is_two = false;
                 }
                 
                 if (cfg('socket')['to_jpg']['is_unlink']) {
