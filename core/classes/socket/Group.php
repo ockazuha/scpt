@@ -1,6 +1,6 @@
 <?php
 class Group {
-    public $socket, $con, $data;
+    public $socket, $con, $data, $buffer = [];
     
     function __construct($socket, $con) {
         $this->socket = $socket;

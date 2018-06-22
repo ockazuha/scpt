@@ -3,6 +3,7 @@ class CustomDB extends mysqli {
     function __construct($auth_data) {
         parent::__construct($auth_data['host'], $auth_data['user'], $auth_data['pass'], $auth_data['base_name']);
         $this->set_charset('utf8');
+        $this->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, TRUE);
     }
     
     function query($query_str) {

@@ -11,6 +11,7 @@ class User extends Group {
             case 'capt':
                 $data = json_decode($data, true);
                 $keys = $this->normalizeKeysAndGenStrKeys($data['is_reg'], $data['is_phrase'], $data['is_num']);
+                
                 $file_microtime = microtime(true);
                 $is_to_jpg = cfg('socket')['to_jpg']['is_to_jpg'];
                 
@@ -38,6 +39,18 @@ class User extends Group {
                     $height_jpg = $height;
                 }
                 
+                $hash = md5($data['base64']) . "{$width}{$height}";
+                
+                /*foreach ($this->buffer as $key => $c) {
+                    if ($key === ($hash . $keys)) {
+                        if ($c['is_end']) {
+                            
+                        } else {
+                            
+                        }
+                    }
+                }*/
+                
                 if (!($width === 320 and $height === 50)) {
                     $is_two = false;
                 } else {
@@ -56,8 +69,6 @@ class User extends Group {
                         unlink($file_two);
                     }
                 }
-                
-                $hash = md5($data['base64']) . "{$width}{$height}";
                 
                 $is_caps = db()->query("SELECT id FROM caps WHERE width='$width' AND height='$height' AND mime_type='$mime'")->fetch_assoc();
 

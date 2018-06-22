@@ -91,7 +91,8 @@ table {
 }
 
 #capts .types .active,
-#ented .types .active {
+#ented .types .active,
+#repeats .types .active{
     background-color: #ffeb3b;
 }
 

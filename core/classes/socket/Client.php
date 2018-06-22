@@ -40,12 +40,10 @@ class Client extends Group {
                 //is num repeats
                 if (db()->query("SELECT value FROM settings WHERE name='is_save_repeats'")->fetch_assoc()['value']) {
                     $r_input = trim($input);
-                    
                     $c = db()->query("SELECT * FROM captchas WHERE id='$data[id]'")->fetch_assoc();
                     
                     if ($c['is_two']) {
                         if ($c['is_job']) {
-                            $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
                             if ($c['job_code'] === 1) {
                                 $this->addRepeat($c, $r_input, $c['hash_one'], $c['image_id_one'], (mb_strpos($r_input, ' ') !== false));
                             } elseif ($c['job_code'] === 2) {
@@ -79,6 +77,7 @@ class Client extends Group {
                     if ($c['is_job']) {
                         $input = trim($input);
                         $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
+
                         if (!$r['is_skip']) {
                             if ($c['job_code'] === 1) {
                                 $input .= ' ' . $r['input'];
@@ -108,7 +107,6 @@ class Client extends Group {
 
                         if ($c['is_two']) {
                             if ($c['is_job']) {
-                                $r = db()->query("SELECT * FROM repeats WHERE id='$c[job_id]'")->fetch_assoc();
                                 if ($c['job_code'] === 1) {
                                     $this->addRepeat($c, null, $c['hash_one'], $c['image_id_one']);
                                 } elseif ($c['job_code'] === 2) {
@@ -137,7 +135,7 @@ class Client extends Group {
                                 }
                             }
                             
-                            db()->query("UPDATE captchas SET input='" . db()->escape_string($input) . "', WHERE id='$data[id]'");
+                            db()->query("UPDATE captchas SET input='" . db()->escape_string($input) . "' WHERE id='$data[id]'");
                             $sock->sendUser($data['num_user'], 'input', $input);
                             $this->sendEnted($data['id']);
                             break;
