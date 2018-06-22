@@ -299,6 +299,10 @@ class User extends Group {
             throw new Base_Exception('Error imgToJPG: ' . $res);
         }
         
+        $size = getimagesize($file_jpg);
+        $width_jpg = $size[0];
+        $height_jpg = $size[1];
+        
         return [
             'file_jpg' => $file_jpg,
             'width_jpg' => $width_jpg,
