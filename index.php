@@ -13,6 +13,7 @@ require_once __DIR__ . '/core/static_boot.php';
 <body>
     <div id="settings">
         <input type="checkbox" id="is_save_repeats"><label for="is_save_repeats">Сохранение</label>
+        <br><input type="checkbox" id="is_autoenter"><label for="is_autoenter">Автоввод</label>
     </div>
     
     <div id="users">

@@ -16,8 +16,17 @@ class User extends Group {
                 $is_to_jpg = cfg('socket')['to_jpg']['is_to_jpg'];
                 
                 $file = FILES_DIR . '/temp_to_jpg/source/' . $file_microtime;
-                if (!isset($data['base64'])) break;
-                $file = base64ToFile($file, $data['base64']);
+                if (!isset($data['base64'])) {
+                    $sock->send($this->con, 'skip');
+                    break;
+                }
+                try {
+                    $file = base64ToFile($file, $data['base64']);
+                } catch (PHP_Exception $e) {
+                    MyError::exceptionCatcher($e, false);
+                    $sock->send($this->con, 'skip');
+                    break;
+                }
                 $mime = $file[1];
                 $file = $file[0];
                 $size = getimagesize($file);
@@ -124,6 +133,20 @@ class User extends Group {
                         }
                     } elseif ($r1) {
                         db()->query("UPDATE repeats SET count=count+1 WHERE id='$r1[id]'");
+                        
+                        if (db()->query("SELECT value FROM settings WHERE name='is_autoenter'")->fetch_assoc()['value']) {
+                            if (!$r1['is_skip']) {
+                                $input = $r1['input'];
+                                if ($data['is_phrase']) {
+                                    if (!$r1['is_phrase2']) {
+                                        $input .= ' ';
+                                    }
+                                }
+                                $sock->send($this->con, 'input', $input);
+                                break;
+                            }
+                        }
+                        
                         $image_id_one = $r1['image_id'];
                         
                         $is_job = true;
@@ -131,6 +154,20 @@ class User extends Group {
                         $job_id = $r1['id'];
                     } elseif ($r2) {
                         db()->query("UPDATE repeats SET count=count+1 WHERE id='$r2[id]'");
+                        
+                        if (db()->query("SELECT value FROM settings WHERE name='is_autoenter'")->fetch_assoc()['value']) {
+                            if (!$r2['is_skip']) {
+                                $input = $r2['input'];
+                                if ($data['is_phrase']) {
+                                    if (!$r2['is_phrase2']) {
+                                        $input .= ' ';
+                                    }
+                                }
+                                $sock->send($this->con, 'input', $input);
+                                break;
+                            }
+                        }
+                        
                         $image_id_two = $r2['image_id'];
                         
                         $is_job = true;
@@ -236,6 +273,7 @@ class User extends Group {
                 }
                 
                 if ($is_job) {
+                    $data['is_phrase'] = false;
                     if ($job_code === 1) {
                         $data['base64'] = $base64_one;
                     } elseif ($job_code === 2) {

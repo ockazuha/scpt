@@ -112,6 +112,7 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
             sock.send('get_lang');
             sock.send('get_discs');
             sock.send('get_setting', {name:'is_save_repeats'}, true);
+            sock.send('get_setting', {name:'is_autoenter'}, true);
             break;
         case 'res_get_setting':
             data = json.decode(data);
@@ -121,6 +122,12 @@ sock.init("<?=cfg('socket')['client_addr']?>", 'other', 'client', function(cmd, 
                 // лучше выполнять 1 раз, т.е. создать переменную что тут инициализированно
                 $("#is_save_repeats").change(function() {
                     sock.send('set_setting', {name: 'is_save_repeats', value: this.checked}, true);
+                });
+            } else if (data.name === 'is_autoenter') {
+                $("#is_autoenter").prop('checked',func.bool(data.value));
+                // лучше выполнять 1 раз, т.е. создать переменную что тут инициализированно
+                $("#is_autoenter").change(function() {
+                    sock.send('set_setting', {name: 'is_autoenter', value: this.checked}, true);
                 });
             }
             break;

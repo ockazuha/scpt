@@ -63,6 +63,7 @@ db()->query("CREATE TABLE IF NOT EXISTS settings ("
         . ") ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 db()->query("INSERT IGNORE INTO settings SET name='is_save_repeats', value='0'");
+db()->query("INSERT IGNORE INTO settings SET name='is_autoenter', value='0'");
 
 db()->query("CREATE TABLE IF NOT EXISTS repeats ("
         . "id int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
